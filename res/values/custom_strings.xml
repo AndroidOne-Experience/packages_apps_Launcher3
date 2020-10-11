@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2024 Paranoid Android
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+
+    <!-- Google Now -->
+    <string name="google_feed_title">Swipe to access Google feed</string>
+    <string name="google_feed_summary" translatable="false">@string/google_feed_right_summary</string>
+    <string name="google_feed_left_summary">From home screen, swipe left to open Google feed</string>
+    <string name="google_feed_right_summary">From home screen, swipe right to open Google feed</string>
+
+</resources>
