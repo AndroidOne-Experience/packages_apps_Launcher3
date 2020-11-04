@@ -11,4 +11,8 @@
     <string name="google_feed_left_summary">From home screen, swipe left to open Google feed</string>
     <string name="google_feed_right_summary">From home screen, swipe right to open Google feed</string>
 
+    <!-- Suggestions -->
+    <string name="suggestion_screen_title">Suggestions</string>
+    <string name="suggestion_screen_summary">For All Apps &amp; Home screen suggestions</string>
+
 </resources>
