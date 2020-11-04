@@ -55,6 +55,7 @@
         android:summary="@string/suggestion_screen_summary"
         android:persistent="false" >
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
+    </Preference>
 
     <!-- 
     OPEN KEYBOARDS WHENEVER APP DRAWER BECOMES VISIBLE
