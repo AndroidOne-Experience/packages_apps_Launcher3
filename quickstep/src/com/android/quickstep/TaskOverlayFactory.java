@@ -432,6 +432,15 @@ public class TaskOverlayFactory {
                 endLiveTileMode(TaskOverlay.this::enterSplitSelect);
             }
 
+            @Override
+            public void onLens() {
+                if (mIsAllowedByPolicy) {
+                    endLiveTileMode(() -> mImageApi.startLensActivity());
+                } else {
+                    showBlockedByPolicyMessage();
+                }
+            }
+
             public void onSaveAppPair() {
                 endLiveTileMode(TaskOverlay.this::saveAppPair);
             }
@@ -448,6 +457,9 @@ public class TaskOverlayFactory {
 
         /** User wants to start split screen with current app. */
         void onSplit();
+
+        /** User wants to launch google lens on the current task. */
+        void onLens();
 
         /** User wants to save an app pair with current group of apps. */
         void onSaveAppPair();
