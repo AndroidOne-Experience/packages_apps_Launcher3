@@ -375,6 +375,7 @@ android_library {
     name: "Launcher3ResLib",
     defaults: [
         "launcher_compose_defaults",
+        "SettingsLibDefaults",
     ],
     srcs: [],
     resource_dirs: ["res"],
@@ -409,6 +410,7 @@ android_library {
         "com_android_systemui_shared_flags_lib",
         "libGoogleFeed",
         "bcsmartspace-google",
+        "SettingsLib",
     ],
     manifest: "AndroidManifest-common.xml",
     sdk_version: "current",
