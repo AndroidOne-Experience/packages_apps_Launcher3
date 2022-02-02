@@ -15,4 +15,9 @@
     <string name="suggestion_screen_title">Suggestions</string>
     <string name="suggestion_screen_summary">For All Apps &amp; Home screen suggestions</string>
 
+    <!-- Hotseat searchbar -->
+    <string name="hotseat_label_search">Search</string>
+    <string name="hotseat_label_lens">Google Lens</string>
+    <string name="hotseat_label_voice_search">Voice search</string>
+
 </resources>
