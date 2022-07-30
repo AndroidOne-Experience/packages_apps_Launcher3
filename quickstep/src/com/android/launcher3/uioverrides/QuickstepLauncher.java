@@ -220,6 +220,13 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import android.app.smartspace.SmartspaceTarget;
+import com.android.launcher3.CustomLauncherModelDelegate.SmartspaceItem;
+import com.android.launcher3.model.BgDataModel;
+import com.android.launcher3.qsb.LauncherUnlockAnimationController;
+import com.google.android.systemui.smartspace.BcSmartspaceDataProvider;
+import java.util.stream.Collectors;
+
 public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         SystemShortcut.BubbleActivityStarter {
     private static final boolean TRACE_LAYOUTS =
@@ -269,6 +276,18 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
 
     public static QuickstepLauncher getLauncher(Context context) {
         return fromContext(context);
+    }
+
+    private BcSmartspaceDataProvider mSmartspacePlugin = new BcSmartspaceDataProvider();
+    private LauncherUnlockAnimationController mUnlockAnimationController =
+            new LauncherUnlockAnimationController(this);
+
+    public BcSmartspaceDataProvider getSmartspacePlugin() {
+        return mSmartspacePlugin;
+    }
+
+    public LauncherUnlockAnimationController getLauncherUnlockAnimationController() {
+        return mUnlockAnimationController;
     }
 
     @Override
@@ -518,10 +537,20 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     public void onOverlayVisibilityChanged(boolean visible) {
         super.onOverlayVisibilityChanged(visible);
         mIsOverlayVisible = visible;
+        mUnlockAnimationController.updateSmartspaceState();
     }
 
     @Override
     public void bindExtraContainerItems(FixedContainerItems item) {
+        if (item.containerId == -110) {
+            List<SmartspaceTarget> targets = item.items.stream()
+                    .map(i -> ((SmartspaceItem) i).getSmartspaceTarget())
+                    .collect(Collectors.toList());
+            mSmartspacePlugin.onTargetsAvailable(targets);
+        }
+
+        super.bindExtraContainerItems(item);
+
         if (item.containerId == Favorites.CONTAINER_PREDICTION) {
             mAllAppsPredictions = item;
             PredictionRowView<?> predictionRowView =
@@ -571,6 +600,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         mSplitWithKeyboardShortcutController.onDestroy();
         if (mViewCapture != null) mViewCapture.close();
         removeBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
+
+        SystemUiProxy.INSTANCE.get(this)
+                .setLauncherUnlockAnimationController("null", null);
     }
 
     @Override
@@ -699,6 +731,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         View.setTracedRequestLayoutClassClass(TRACE_RELAYOUT_CLASS);
         OverviewComponentObserver.INSTANCE.get(this)
                 .addOverviewChangeListener(mOverviewChangeListener);
+
+        SystemUiProxy.INSTANCE.get(this).setLauncherUnlockAnimationController(
+                this.getClass().getSimpleName(), mUnlockAnimationController);
     }
 
     @Override
@@ -1535,5 +1570,11 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
 
     public void setCanShowAllAppsEducationView(boolean canShowAllAppsEducationView) {
         mCanShowAllAppsEducationView = canShowAllAppsEducationView;
+    }
+
+    @Override
+    public void onPageEndTransition() {
+        super.onPageEndTransition();
+        mUnlockAnimationController.updateSmartspaceState();
     }
 }
