@@ -1260,9 +1260,7 @@ public class DeviceProfile {
             // icons in the hotseat are a different size, and so don't line up perfectly. To account
             // for this, we pad the left and right of the hotseat with half of the difference of a
             // workspace cell vs a hotseat cell.
-            float workspaceCellWidth = (float) mDeviceProperties.getWidthPx() / inv.numColumns;
-            float hotseatCellWidth = (float) mDeviceProperties.getWidthPx() / numShownHotseatIcons;
-            int hotseatAdjustment = Math.round((workspaceCellWidth - hotseatCellWidth) / 2);
+            int hotseatAdjustment = hotseatBorderSpace / 2;
             hotseatBarPadding.set(
                     hotseatAdjustment + mWorkspaceProfile.getWorkspacePadding().left
                             + mWorkspaceProfile.getCellLayoutPaddingPx().left
