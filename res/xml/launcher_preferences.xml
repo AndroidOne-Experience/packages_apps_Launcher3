@@ -56,6 +56,16 @@
         android:persistent="false" >
         <intent android:action="android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS" />
 
+    <!-- 
+    OPEN KEYBOARDS WHENEVER APP DRAWER BECOMES VISIBLE
+    -->
+    <SwitchPreference
+        android:key="pref_drawer_open_keyboard"
+        android:title="@string/drawer_open_keyboard_title"
+        android:summary="@string/drawer_open_keyboard_summary"
+        android:defaultValue="false"
+        android:persistent="true" />
+
     <!--
       LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
       LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)

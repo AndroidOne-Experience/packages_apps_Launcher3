@@ -44,6 +44,7 @@ public class OverlayCallbackImpl
         OnSharedPreferenceChangeListener {
 
     public static final String KEY_MINUS_ONE = "pref_minus_one";
+    public static final String KEY_DRAWER_OPEN_KEYBOARD = "pref_drawer_open_keyboard";
 
     private final Launcher mLauncher;
     private final LauncherClient mClient;

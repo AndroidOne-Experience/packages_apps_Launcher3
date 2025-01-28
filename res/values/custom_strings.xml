@@ -23,4 +23,8 @@
     <!-- Recents -->
     <string name="action_lens">Lens</string>
 
+    <!-- Open keyboard -->
+    <string name="drawer_open_keyboard_title">Swipe up to start search</string>
+    <string name="drawer_open_keyboard_summary">Open keyboard whenever app drawer becomes visible</string>
+
 </resources>
