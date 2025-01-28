@@ -104,6 +104,8 @@ import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.ItemInfoMatcher.forFolderMatch;
 import static com.android.launcher3.util.SettingsCache.TOUCHPAD_NATURAL_SCROLLING;
 
+import static com.android.launcher3.uioverrides.OverlayCallbackImpl.KEY_DRAWER_OPEN_KEYBOARD;
+
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
@@ -1300,6 +1302,9 @@ public class Launcher extends StatefulActivity<LauncherState>
             getAppsView().reset(false);
             getAllAppsExitEvent().ifPresent(getStatsLogManager().logger()::log);
             mAllAppsSessionLogId = null;
+        } else if (ALL_APPS.equals(state)
+                && mSharedPrefs.getBoolean(KEY_DRAWER_OPEN_KEYBOARD, false)) {
+            getAppsView().getSearchUiManager().focusSearchField();
         }
 
         // Set screen title for Talkback

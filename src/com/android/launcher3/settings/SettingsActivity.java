@@ -27,6 +27,7 @@ import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
 import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
 
 import static com.android.launcher3.uioverrides.OverlayCallbackImpl.KEY_MINUS_ONE;
+import static com.android.launcher3.uioverrides.OverlayCallbackImpl.KEY_DRAWER_OPEN_KEYBOARD;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -308,7 +309,16 @@ public class SettingsActivity extends FragmentActivity
         }
 
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {}
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            switch (key) {
+                case KEY_DRAWER_OPEN_KEYBOARD:
+                    InvariantDeviceProfile.INSTANCE.get(getContext())
+                            .onConfigChanged(getActivity().getApplicationContext());
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /**
          * Initializes a preference. This is called for every preference. Returning false here
