@@ -1146,6 +1146,12 @@ public class Launcher extends StatefulActivity<LauncherState>
                         .log(getAllAppsEntryEvent().get());
             }
         }
+
+        // Hide the keyboard as soon as we start exiting app drawer
+        if (ALL_APPS.equals(mPrevLauncherState) && !ALL_APPS.equals(state)) {
+            hideKeyboard();
+        }
+
         updateDisallowBack();
     }
 
