@@ -149,8 +149,8 @@ public class AppsSearchContainerLayout extends ExtendedEditText
     }
 
     @Override
-    public void focusSearchField() {
-        mSearchBarController.focusSearchField();
+    public boolean focusSearchField() {
+        return mSearchBarController.focusSearchField();
     }
 
     @Override
