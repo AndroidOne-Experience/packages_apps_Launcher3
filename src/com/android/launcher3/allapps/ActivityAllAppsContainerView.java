@@ -824,14 +824,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     protected int getHeaderColor(float blendRatio) {
-        if (!mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            return ColorUtils.setAlphaComponent(
-                    ColorUtils.blendARGB(mScrimColor, mHeaderProtectionColor, blendRatio),
-                    (int) (mSearchContainer.getAlpha() * 255));
-        }
-        return isBackgroundBlurEnabled()
-                ? ColorUtils.setAlphaComponent(mHeaderProtectionColor, (int) (blendRatio * 255))
-                : ColorUtils.blendARGB(getBackgroundColor(), mHeaderProtectionColor, blendRatio);
+        return 0;
     }
 
     private int getBackgroundColor() {
