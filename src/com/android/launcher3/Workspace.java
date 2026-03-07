@@ -606,32 +606,33 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      * Initializes and binds the first page
      */
     public void bindAndInitFirstWorkspaceScreen() {
-        if ((!FeatureFlags.QSB_ON_FIRST_SCREEN
-                || !mLauncher.getIsFirstPagePinnedItemEnabled())
-                || SHOULD_SHOW_FIRST_PAGE_WIDGET) {
+
+        if (SHOULD_SHOW_FIRST_PAGE_WIDGET) {
             mFirstPagePinnedItem = null;
             return;
         }
 
-        // Add the first page
-        CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
-        if (mFirstPagePinnedItem == null) {
-            // In transposed layout, we add the first page pinned widget in the Grid.
-            // As workspace does not touch the edges, we do not need a full
-            // width first page pinned item.
-            mFirstPagePinnedItem = LayoutInflater.from(getContext())
-                    .inflate(R.layout.search_container_workspace, firstPage, false);
+        // Make sure workspace screens exist
+        if (mWorkspaceScreens.size() == 0) {
+            return;
         }
 
-        int cellHSpan = mLauncher.getDeviceProfile().inv.numSearchContainerColumns;
-        int cellYSpan = mLauncher.getDeviceProfile().inv.numRows <= 5 ? 1 : 2; // let's add an extra span for grids with more than 5 rows, so smartspace has enough place to be drawn
-        CellLayoutLayoutParams lp = new CellLayoutLayoutParams(0, 0, cellHSpan, cellYSpan);
-        lp.canReorder = false;
-        if (!firstPage.addViewToCellLayout(
-                mFirstPagePinnedItem, 0, R.id.search_container_workspace, lp, true)) {
-            Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
-            mFirstPagePinnedItem = null;
+        int firstScreenId = mWorkspaceScreens.keyAt(0);
+        CellLayout firstPage = getScreenWithId(firstScreenId);
+
+        if (firstPage == null) {
+            return;
         }
+
+        mFirstPagePinnedItem = LayoutInflater.from(getContext())
+                .inflate(R.layout.search_container_workspace, firstPage, false);
+
+        CellLayoutLayoutParams lp =
+                new CellLayoutLayoutParams(0, 0, firstPage.getCountX(), 1);
+
+        mFirstPagePinnedItem.setLayoutParams(lp);
+        firstPage.addViewToCellLayout(mFirstPagePinnedItem, 0,
+                R.id.search_container_workspace, lp, true);
     }
 
     public void removeAllWorkspaceScreens() {
@@ -702,6 +703,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         updatePageScrollValues();
         updateCellLayoutMeasures();
+
+    // Ensure smartspace is added once first screen exists
+    if (insertIndex == 0 && mFirstPagePinnedItem == null) {
+        bindAndInitFirstWorkspaceScreen();
+    }
+
         return newScreen;
     }
 
