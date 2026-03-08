@@ -52,8 +52,19 @@ public class QsbLayout extends FrameLayout implements
 
         String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
         setOnClickListener(view -> {
-            mContext.startActivity(new Intent("android.search.action.GLOBAL_SEARCH").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
-                Intent.FLAG_ACTIVITY_CLEAR_TASK).setPackage(searchPackage));
+            Intent intent = new Intent("android.search.action.GLOBAL_SEARCH")
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .setPackage(searchPackage);
+
+            try {
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                android.widget.Toast.makeText(
+                        mContext,
+                        "Google search not available",
+                        android.widget.Toast.LENGTH_SHORT
+                ).show();
+            }
         });
 
         if (Utilities.isGSAEnabled(mContext)) {
@@ -108,7 +119,15 @@ public class QsbLayout extends FrameLayout implements
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .setData(Uri.parse(Utilities.LENS_URI))
                     .putExtra("LensHomescreenShortcut", true);
-            mContext.startActivity(lensIntent);
+            try {
+                mContext.startActivity(lensIntent);
+            } catch (Exception e) {
+                android.widget.Toast.makeText(
+                        mContext,
+                        "Google Lens not available",
+                        android.widget.Toast.LENGTH_SHORT
+                ).show();
+            }
         });
     }
 
