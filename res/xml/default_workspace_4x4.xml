@@ -60,28 +60,33 @@
     </resolve>
 
     <!-- Bottom row -->
-    <resolve
+
+    <favorite
+        launcher:packageName="com.android.vending"
+        launcher:className="com.google.android.finsky.activities.MainActivity"
         launcher:screen="0"
         launcher:x="0"
-        launcher:y="-1" >
-        <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_EMAIL;end" />
-        <favorite launcher:uri="mailto:" />
-    </resolve>
+        launcher:y="-1" />
 
-    <resolve
+    <favorite
+        launcher:packageName="com.google.android.gm"
+        launcher:className="com.google.android.gm.ConversationListActivityGmail"
         launcher:screen="0"
         launcher:x="1"
-        launcher:y="-1" >
-        <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_GALLERY;end" />
-        <favorite launcher:uri="#Intent;type=images/*;end" />
-    </resolve>
+        launcher:y="-1" />
 
-    <resolve
+    <favorite
+        launcher:packageName="com.google.android.apps.photos"
+        launcher:className="com.google.android.apps.photos.home.HomeActivity"
+        launcher:screen="0"
+        launcher:x="2"
+        launcher:y="-1" />
+
+    <favorite
+        launcher:packageName="com.google.android.youtube"
+        launcher:className="com.google.android.apps.youtube.app.WatchWhileActivity"
         launcher:screen="0"
         launcher:x="3"
-        launcher:y="-1" >
-        <favorite launcher:uri="#Intent;action=android.intent.action.MAIN;category=android.intent.category.APP_MARKET;end" />
-        <favorite launcher:uri="market://details?id=com.android.launcher" />
-    </resolve>
+        launcher:y="-1" />
 
 </favorites>
