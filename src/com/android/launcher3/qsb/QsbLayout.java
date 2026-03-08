@@ -66,10 +66,7 @@ public class QsbLayout extends FrameLayout implements
                 ).show();
             }
         });
-
-        if (Utilities.isGSAEnabled(mContext)) {
-            enableLensIcon();
-        }
+        enableLensIcon();
     }
 
     @Override
