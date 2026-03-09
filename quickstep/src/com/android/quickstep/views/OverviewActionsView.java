@@ -184,11 +184,10 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         mSplitButton.setOnClickListener(this);
         mSaveAppPairButton.setOnClickListener(this);
 
-        if (Utilities.isGSAEnabled(getContext())) {
-            View lensButton = findViewById(R.id.action_lens);
-            lensButton.setOnClickListener(this);
-            lensButton.setVisibility(VISIBLE);
-        }
+        // Google lens (recent screen)
+        View lensButton = findViewById(R.id.action_lens);
+        lensButton.setOnClickListener(this);
+        lensButton.setVisibility(VISIBLE);
     }
 
     /**
