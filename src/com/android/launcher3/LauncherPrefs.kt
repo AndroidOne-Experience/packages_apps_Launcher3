@@ -245,6 +245,8 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
         const val TASKBAR_PINNING_KEY = "TASKBAR_PINNING_KEY"
         const val TASKBAR_PINNING_DESKTOP_MODE_KEY = "TASKBAR_PINNING_DESKTOP_MODE_KEY"
+        const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
+        const val SMARTSPACE_ON_HOME_SCREEN_KEY = "pref_smartspace_home_screen"
 
         @JvmField
         val ENABLE_TWOLINE_ALLAPPS_TOGGLE = backedUpItem("pref_enable_two_line_toggle", false)
@@ -274,8 +276,17 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val DB_FILE = backedUpItem(DeviceGridState.KEY_DB_FILE, "", EncryptionType.ENCRYPTED)
         @JvmField
+        @JvmField
         val GRID_TYPE =
             backedUpItem(DeviceGridState.KEY_GRID_TYPE, GRID_TYPE_ANY, EncryptionType.ENCRYPTED)
+        @JvmField
+        val SHOULD_SHOW_SMARTSPACE =
+            backedUpItem(
+                SHOULD_SHOW_SMARTSPACE_KEY,
+                BuildConfig.WIDGET_ON_FIRST_SCREEN,
+                EncryptionType.DEVICE_PROTECTED,
+            )
+        @JvmField val SMARTSPACE_ON_HOME_SCREEN = backedUpItem(SMARTSPACE_ON_HOME_SCREEN_KEY, true)
         @JvmField
         val RESTORE_DEVICE =
             backedUpItem(
@@ -355,6 +366,12 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
             encryptionType: EncryptionType = EncryptionType.ENCRYPTED,
         ): ConstantItem<T> =
             ConstantItem(sharedPrefKey, isBackedUp = false, defaultValue, encryptionType)
+
+        @JvmStatic
+        fun shouldShowSmartspaceOnHomeScreen(context: Context): Boolean =
+            BuildConfig.QSB_ON_FIRST_SCREEN &&
+                !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET &&
+                get(context).get(SMARTSPACE_ON_HOME_SCREEN)
 
         @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
         @JvmStatic

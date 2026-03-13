@@ -651,7 +651,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     public void bindAndInitFirstWorkspaceScreen() {
         // Add the first page
         CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
-        if (!qsbOnFirstScreen()) {
+        if (!qsbOnFirstScreen() || !LauncherPrefs.shouldShowSmartspaceOnHomeScreen(getContext())) {
             mFirstPagePinnedItem = null;
             return;
         }
@@ -692,6 +692,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         // Ensure that the first page is always present
         bindAndInitFirstWorkspaceScreen();
+
+        // Remove any deferred refresh callbacks
+        mLauncher.mHandler.removeCallbacksAndMessages(DeferredWidgetRefresh.class);
 
         // Re-enable the layout transitions
         enableLayoutTransitions();
@@ -859,6 +862,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         for (int i = 0; i < finalScreens.size(); i++) {
             int screenId = finalScreens.keyAt(i);
 
+            // We don't want to remove the first screen even if it's empty because that's where
+            // first page pinned item would go if it gets turned back on.
+            if (BuildConfig.QSB_ON_FIRST_SCREEN && screenId == FIRST_SCREEN_ID) {
+                continue;
+            }
             CellLayout screen = finalScreens.get(screenId);
 
             mWorkspaceScreens.remove(screenId);

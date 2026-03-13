@@ -28,6 +28,8 @@ import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.OnIDPChangeListener
 import com.android.launcher3.LauncherModel
+import com.android.launcher3.LauncherPrefChangeListener
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.Utilities
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.graphics.ThemeManager
@@ -128,6 +130,18 @@ constructor(
         settingsCache.register(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, psSettingsListener)
         lifeCycle.addCloseable {
             settingsCache.unregister(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, psSettingsListener)
+        }
+
+        // Smartspace on home screen changes
+        if (BuildConfig.QSB_ON_FIRST_SCREEN && !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET) {
+            val smartspacePrefListener = LauncherPrefChangeListener {
+                model.forceReload()
+            }
+            val launcherPrefs = LauncherPrefs.get(context)
+            launcherPrefs.addListener(smartspacePrefListener, LauncherPrefs.SMARTSPACE_ON_HOME_SCREEN)
+            lifeCycle.addCloseable {
+                launcherPrefs.removeListener(smartspacePrefListener, LauncherPrefs.SMARTSPACE_ON_HOME_SCREEN)
+            }
         }
 
         // Notification dots changes
