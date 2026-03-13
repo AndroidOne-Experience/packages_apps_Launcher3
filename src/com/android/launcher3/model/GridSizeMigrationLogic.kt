@@ -20,16 +20,12 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Point
 import android.util.Log
 import androidx.annotation.VisibleForTesting
-import com.android.launcher3.Flags
 import com.android.launcher3.Flags.oneGridSpecs
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherPrefs.Companion.get
-import com.android.launcher3.LauncherPrefs.Companion.getPrefs
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.LauncherSettings.Favorites.TABLE_NAME
 import com.android.launcher3.LauncherSettings.Favorites.TMP_TABLE
-import com.android.launcher3.Utilities
-import com.android.launcher3.config.FeatureFlags
 import com.android.launcher3.model.GridSizeMigrationDBController.DbReader
 import com.android.launcher3.provider.LauncherDbUtils.SQLiteTransaction
 import com.android.launcher3.provider.LauncherDbUtils.copyTable
@@ -476,11 +472,7 @@ class GridSizeMigrationLogic {
         val next: Point =
             if (
                 screenId == 0 &&
-                    (FeatureFlags.QSB_ON_FIRST_SCREEN &&
-                        (!Flags.enableSmartspaceRemovalToggle() ||
-                            getPrefs(context)
-                                .getBoolean(LoaderTask.SMARTSPACE_ON_HOME_SCREEN, true)) &&
-                        !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET)
+                    LauncherPrefs.shouldShowSmartspaceOnHomeScreen(context)
             ) {
                 Point(0, 1 /* smartspace */)
             } else {

@@ -19,7 +19,6 @@ package com.android.launcher3.model;
 import static com.android.launcher3.BuildConfig.WIDGET_ON_FIRST_SCREEN;
 import static com.android.launcher3.Flags.enableLauncherBrMetricsFixed;
 import static com.android.launcher3.Flags.enableSmartspaceAsAWidget;
-import static com.android.launcher3.Flags.enableSmartspaceRemovalToggle;
 import static com.android.launcher3.Flags.enableTieredWidgetsByDefaultInPicker;
 import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
 import static com.android.launcher3.LauncherPrefs.SHOULD_SHOW_SMARTSPACE;
@@ -123,7 +122,6 @@ import java.util.concurrent.CancellationException;
 @SuppressWarnings("NewApi")
 public class LoaderTask implements Runnable {
     private static final String TAG = "LoaderTask";
-    public static final String SMARTSPACE_ON_HOME_SCREEN = "pref_smartspace_home_screen";
 
     private static final boolean DEBUG = true;
 
@@ -417,9 +415,8 @@ public class LoaderTask implements Runnable {
         }
         logASplit("loadWorkspace finished");
 
-        mBgDataModel.isFirstPagePinnedItemEnabled = FeatureFlags.QSB_ON_FIRST_SCREEN
-                && (!enableSmartspaceRemovalToggle() || LauncherPrefs.getPrefs(
-                mApp.getContext()).getBoolean(SMARTSPACE_ON_HOME_SCREEN, true));
+        mBgDataModel.isFirstPagePinnedItemEnabled =
+                LauncherPrefs.shouldShowSmartspaceOnHomeScreen(mApp.getContext());
     }
 
     private void loadWorkspaceImpl(

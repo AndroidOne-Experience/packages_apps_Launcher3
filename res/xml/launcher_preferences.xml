@@ -46,6 +46,13 @@
         android:summary="@string/google_feed_summary"
         android:defaultValue="true" />
 
+    <SwitchPreferenceCompat
+        android:key="pref_smartspace_home_screen"
+        android:title="@string/at_a_glance_title"
+        android:summary="@string/at_a_glance_home_screen_summary"
+        android:defaultValue="true"
+        android:persistent="true" />
+
     <!-- 
     ALL APPS & HOME SCREEN SUGGESTIONS
     -->

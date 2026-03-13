@@ -18,7 +18,6 @@ package com.android.launcher3;
 
 import static com.android.launcher3.AbstractFloatingView.TYPE_WIDGET_RESIZE_FRAME;
 import static com.android.launcher3.BubbleTextView.DISPLAY_FOLDER;
-import static com.android.launcher3.Flags.enableSmartspaceRemovalToggle;
 import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION;
 import static com.android.launcher3.LauncherState.ALL_APPS;
@@ -650,11 +649,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         mScreenOrder.clear();
         mWorkspaceScreens.clear();
 
-        // Ensure that the first page is always present
-        if (!enableSmartspaceRemovalToggle()) {
-            bindAndInitFirstWorkspaceScreen();
-        }
-
         // Remove any deferred refresh callbacks
         mLauncher.mHandler.removeCallbacksAndMessages(DeferredWidgetRefresh.class);
 
@@ -820,7 +814,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
             // We don't want to remove the first screen even if it's empty because that's where
             // first page pinned item would go if it gets turned back on.
-            if (enableSmartspaceRemovalToggle() && screenId == FIRST_SCREEN_ID) {
+            if (FeatureFlags.QSB_ON_FIRST_SCREEN && screenId == FIRST_SCREEN_ID) {
                 continue;
             }
 

@@ -15,6 +15,10 @@
     <string name="suggestion_screen_title">Suggestions</string>
     <string name="suggestion_screen_summary">For All Apps &amp; Home screen suggestions</string>
 
+    <!-- At a Glance -->
+    <string name="at_a_glance_title">At a Glance</string>
+    <string name="at_a_glance_home_screen_summary">Show At a Glance on the Home screen</string>
+
     <!-- Hotseat searchbar -->
     <string name="hotseat_label_search">Search</string>
     <string name="hotseat_label_lens">Google Lens</string>

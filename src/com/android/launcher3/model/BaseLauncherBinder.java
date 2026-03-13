@@ -17,7 +17,6 @@
 package com.android.launcher3.model;
 
 import static com.android.launcher3.BuildConfig.WIDGETS_ENABLED;
-import static com.android.launcher3.Flags.enableSmartspaceRemovalToggle;
 import static com.android.launcher3.Flags.enableWorkspaceInflation;
 import static com.android.launcher3.model.ItemInstallQueue.FLAG_LOADER_RUNNING;
 import static com.android.launcher3.model.ModelUtils.filterCurrentWorkspaceItems;
@@ -306,10 +305,7 @@ public class BaseLauncherBinder {
             executeCallbacksTask(c -> {
                 c.clearPendingBinds();
                 c.startBinding();
-                if (enableSmartspaceRemovalToggle()) {
-                    c.setIsFirstPagePinnedItemEnabled(
-                            mBgDataModel.isFirstPagePinnedItemEnabled);
-                }
+                c.setIsFirstPagePinnedItemEnabled(mBgDataModel.isFirstPagePinnedItemEnabled);
             }, mUiExecutor);
 
             // Bind workspace screens

@@ -80,6 +80,8 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     public static final String FIXED_LANDSCAPE_MODE = "pref_fixed_landscape_mode";
 
     private static final String NOTIFICATION_DOTS_PREFERENCE_KEY = "pref_icon_badging";
+    private static final String SMARTSPACE_ON_HOME_SCREEN_PREFERENCE_KEY =
+            "pref_smartspace_home_screen";
 
     public static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
 
@@ -339,6 +341,9 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                     mShowGoogleAppPref = preference;
                     preference.setEnabled(Utilities.isGSAEnabled(getContext()));
                     return true;
+                case SMARTSPACE_ON_HOME_SCREEN_PREFERENCE_KEY:
+                    return BuildConfig.QSB_ON_FIRST_SCREEN
+                            && !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET;
                 case DEVELOPER_OPTIONS_KEY:
                     if (IS_STUDIO_BUILD) {
                         preference.setOrder(0);

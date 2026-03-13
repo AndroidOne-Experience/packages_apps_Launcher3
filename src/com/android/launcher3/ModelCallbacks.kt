@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Trace
 import android.util.Log
 import androidx.annotation.UiThread
-import com.android.launcher3.Flags.enableSmartspaceRemovalToggle
 import com.android.launcher3.LauncherConstants.TraceEvents
 import com.android.launcher3.Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET
 import com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID
@@ -40,7 +39,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
     var pagesToBindSynchronously = LIntSet()
 
     private var isFirstPagePinnedItemEnabled =
-        (BuildConfig.QSB_ON_FIRST_SCREEN && !enableSmartspaceRemovalToggle())
+        (BuildConfig.QSB_ON_FIRST_SCREEN && !SHOULD_SHOW_FIRST_PAGE_WIDGET)
 
     var stringCache: StringCache? = null
 

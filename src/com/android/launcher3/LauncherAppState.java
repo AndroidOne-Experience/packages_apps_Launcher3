@@ -19,14 +19,13 @@ package com.android.launcher3;
 import static android.app.admin.DevicePolicyManager.ACTION_DEVICE_POLICY_RESOURCE_UPDATED;
 import static android.content.Context.RECEIVER_EXPORTED;
 
-import static com.android.launcher3.Flags.enableSmartspaceRemovalToggle;
 import static com.android.launcher3.InvariantDeviceProfile.GRID_NAME_PREFS_KEY;
 import static com.android.launcher3.LauncherPrefs.DB_FILE;
 import static com.android.launcher3.LauncherPrefs.GRID_NAME;
 import static com.android.launcher3.LauncherPrefs.ICON_STATE;
+import static com.android.launcher3.LauncherPrefs.SMARTSPACE_ON_HOME_SCREEN;
 import static com.android.launcher3.LauncherPrefs.THEMED_ICONS;
 import static com.android.launcher3.model.DeviceGridState.KEY_DB_FILE;
-import static com.android.launcher3.model.LoaderTask.SMARTSPACE_ON_HOME_SCREEN;
 import static com.android.launcher3.util.DisplayController.CHANGE_OVERLAYS;
 import static com.android.launcher3.util.DisplayController.CHANGE_UI_MODE;
 import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
@@ -156,13 +155,13 @@ public class LauncherAppState implements SafeCloseable {
                 .addUserEventListener(mModel::onUserEvent);
         mOnTerminateCallback.add(userChangeListener::close);
 
-        if (enableSmartspaceRemovalToggle()) {
+        if (BuildConfig.QSB_ON_FIRST_SCREEN && !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET) {
             OnSharedPreferenceChangeListener firstPagePinnedItemListener =
                     new OnSharedPreferenceChangeListener() {
                         @Override
                         public void onSharedPreferenceChanged(
                                 SharedPreferences sharedPreferences, String key) {
-                            if (SMARTSPACE_ON_HOME_SCREEN.equals(key)) {
+                            if (SMARTSPACE_ON_HOME_SCREEN.getSharedPrefKey().equals(key)) {
                                 mModel.forceReload();
                             }
                         }
