@@ -19,6 +19,10 @@
     <string name="at_a_glance_title">At a Glance</string>
     <string name="at_a_glance_home_screen_summary">Show At a Glance on the Home screen</string>
 
+    <!-- Search bar -->
+    <string name="search_bar_title">Search bar</string>
+    <string name="search_bar_home_screen_summary">Show the Google search bar on the Home screen</string>
+
     <!-- Hotseat searchbar -->
     <string name="hotseat_label_search">Search</string>
     <string name="hotseat_label_lens">Google Lens</string>

@@ -145,6 +145,7 @@ public class DeviceProfile {
     public int hotseatBarBottomSpacePx;
     public int hotseatQsbSpace;
     public int hotseatQsbWidth; // only used when isQsbInline
+    private final boolean mIsHotseatQsbVisible;
     public int hotseatBorderSpace;
     // Space required for the bubble bar between the hotseat and the edge of the screen. If there's
     // not enough space, the hotseat will adjust itself for the bubble bar.
@@ -237,6 +238,7 @@ public class DeviceProfile {
         mIsResponsiveGrid = false;
         mDropTargetProfile = new DropTargetProfile(0, 0, 0, 0, 0, 0, 0, 0, 0);
         hotseatQsbWidth = 0;
+        mIsHotseatQsbVisible = false;
         hotseatBorderSpace = 0;
         mBubbleBarSpaceThresholdPx = 0;
         numShownAllAppsColumns = 0;
@@ -322,6 +324,9 @@ public class DeviceProfile {
                 .createDropTargetProfile(res, shouldApplyWidePortraitDimens);
 
         numShownHotseatIcons = displayOptionSpec.numShownHotseatIcons;
+        mIsHotseatQsbVisible = !isVerticalBarLayout()
+                && getHotseatProfile().getQsbHeight() > 0
+                && LauncherPrefs.shouldShowHotseatSearchBar(context);
         mHotseatColumnSpan = inv.numColumns;
 
         numShownAllAppsColumns = displayOptionSpec.numAllAppsColumns;
@@ -395,6 +400,11 @@ public class DeviceProfile {
 
             } else {
                 hotseatBarBottomSpacePx = hotseatBarBottomSpace;
+            }
+
+            if (!mIsHotseatQsbVisible) {
+                hotseatBarBottomSpacePx +=
+                        res.getDimensionPixelSize(R.dimen.hotseat_qsb_hidden_bottom_space_extra);
             }
         }
 
@@ -677,13 +687,13 @@ public class DeviceProfile {
         if (isVerticalBarLayout()) {
             hotseatBarSizePx = hotseatIconSizePx + getHotseatProfile().getBarEdgePaddingPx()
                     + getHotseatProfile().getBarWorkspaceSpacePx();
-        } else if (isQsbInline) {
-            hotseatBarSizePx = max(hotseatIconSizePx, getHotseatProfile().getQsbVisualHeight())
+        } else if (isHotseatQsbInline()) {
+            hotseatBarSizePx = max(hotseatIconSizePx, getHotseatQsbVisualHeight())
                     + hotseatBarBottomSpacePx;
         } else {
             hotseatBarSizePx = hotseatIconSizePx
-                    + hotseatQsbSpace
-                    + getHotseatProfile().getQsbVisualHeight()
+                    + getHotseatQsbSpace()
+                    + getHotseatQsbVisualHeight()
                     + hotseatBarBottomSpacePx;
         }
     }
@@ -706,7 +716,7 @@ public class DeviceProfile {
                 updateHotseatWidthAndBorderSpace(mHotseatColumnSpan + 2);
             }
         }
-        if (isQsbInline) {
+        if (isHotseatQsbInline()) {
             // If QSB is inline, reduce column span until it fits.
             int maxHotseatWidthAllowedPx = getIconToIconWidthForColumns(numWorkspaceColumns);
             int minHotseatWidthRequiredPx =
@@ -718,7 +728,7 @@ public class DeviceProfile {
                         + hotseatBorderSpace + mHotseatWidthPx;
             }
         }
-        hotseatQsbWidth = calculateQsbWidth(hotseatBorderSpace);
+        hotseatQsbWidth = hasHotseatQsb() ? calculateQsbWidth(hotseatBorderSpace) : 0;
 
         // Spaces should be correct when the nav buttons are not inline
         if (!getHotseatProfile().getAreNavButtonsInline()) {
@@ -729,9 +739,11 @@ public class DeviceProfile {
         int sideSpacePx = getHotseatProfile().getInlineNavButtonsEndSpacingPx();
         int maxHotseatWidthPx = mDeviceProperties.getAvailableWidthPx() - sideSpacePx
                 - getHotseatProfile().getBarEndOffset();
-        int maxHotseatIconsWidthPx = maxHotseatWidthPx - (isQsbInline ? hotseatQsbWidth : 0);
+        int maxHotseatIconsWidthPx =
+                maxHotseatWidthPx - (isHotseatQsbInline() ? hotseatQsbWidth : 0);
         hotseatBorderSpace = calculateHotseatBorderSpace(maxHotseatIconsWidthPx,
-                (isQsbInline ? 1 : 0) + /* border between nav buttons and first icon */ 1);
+                (isHotseatQsbInline() ? 1 : 0)
+                        + /* border between nav buttons and first icon */ 1);
 
         if (hotseatBorderSpace >= getHotseatProfile().getMinIconSpacePx()) {
             return;
@@ -742,7 +754,7 @@ public class DeviceProfile {
         int requiredWidth = getHotseatRequiredWidth();
 
         // If there is an inline qsb, change its size
-        if (isQsbInline) {
+        if (isHotseatQsbInline()) {
             hotseatQsbWidth -= requiredWidth - maxHotseatWidthPx;
             if (hotseatQsbWidth >= getHotseatProfile().getMinQsbWidthPx()) {
                 return;
@@ -752,13 +764,15 @@ public class DeviceProfile {
             hotseatQsbWidth = getHotseatProfile().getMinQsbWidthPx();
         }
 
-        maxHotseatIconsWidthPx = maxHotseatWidthPx - (isQsbInline ? hotseatQsbWidth : 0);
+        maxHotseatIconsWidthPx =
+                maxHotseatWidthPx - (isHotseatQsbInline() ? hotseatQsbWidth : 0);
 
         // If it still doesn't fit, start removing icons
         do {
             numShownHotseatIcons--;
             hotseatBorderSpace = calculateHotseatBorderSpace(maxHotseatIconsWidthPx,
-                    (isQsbInline ? 1 : 0) + /* border between nav buttons and first icon */ 1);
+                    (isHotseatQsbInline() ? 1 : 0)
+                            + /* border between nav buttons and first icon */ 1);
         } while (
                 hotseatBorderSpace < getHotseatProfile().getMinIconSpacePx()
                         && numShownHotseatIcons > 1);
@@ -1231,7 +1245,7 @@ public class DeviceProfile {
             } else {
                 startSpacing = isTablet
                         ? (mDeviceProperties.getAvailableWidthPx() - hotseatWidth) / 2
-                        : (mDeviceProperties.getAvailableWidthPx() - hotseatQsbWidth) / 2;
+                        : (mDeviceProperties.getAvailableWidthPx() - (hasHotseatQsb() ? hotseatQsbWidth : hotseatWidth)) / 2;
                 endSpacing = startSpacing;
             }
             startSpacing += getAdditionalQsbSpace();
@@ -1247,7 +1261,7 @@ public class DeviceProfile {
                 hotseatBarPadding.right = endSpacing;
             }
 
-        } else if (mIsScalableGrid) {
+        } else if (mIsScalableGrid && hasHotseatQsb()) {
             int iconExtraSpacePx = getWorkspaceIconProfile().getIconSizePx() - getIconVisibleSizePx(
                     getWorkspaceIconProfile().getIconSizePx());
             int sideSpacing =
@@ -1312,7 +1326,7 @@ public class DeviceProfile {
     }
 
     private int getAdditionalQsbSpace() {
-        return isTablet && isQsbInline ? hotseatQsbWidth + hotseatBorderSpace : 0;
+        return isTablet && isHotseatQsbInline() ? hotseatQsbWidth + hotseatBorderSpace : 0;
     }
 
     /**
@@ -1330,7 +1344,9 @@ public class DeviceProfile {
      * Returns the number of pixels the QSB is translated from the bottom of the screen.
      */
     public int getQsbOffsetY() {
-        if (isQsbInline) {
+        if (!hasHotseatQsb()) {
+            return getHotseatBarBottomPadding();
+        } else if (isQsbInline) {
             return getHotseatBarBottomPadding()
                     - ((getHotseatProfile().getQsbHeight() - hotseatCellHeightPx) / 2);
         } else if (isTaskbarPresent) { // QSB on top
@@ -1360,8 +1376,8 @@ public class DeviceProfile {
     public int getBubbleBarVerticalCenterForHome() {
         if (shouldAlignBubbleBarWithHotseat()) {
             return hotseatBarSizePx
-                    - (isQsbInline ? 0 : getHotseatProfile().getQsbVisualHeight())
-                    - hotseatQsbSpace
+                    - (isHotseatQsbInline() ? 0 : getHotseatQsbVisualHeight())
+                    - getHotseatQsbSpace()
                     - (hotseatCellHeightPx / 2)
                     + ((hotseatCellHeightPx - getWorkspaceIconProfile().getIconSizePx()) / 2);
         } else {
@@ -1376,7 +1392,23 @@ public class DeviceProfile {
 
     /** Returns whether bubble bar should be aligned with the hotseat. */
     public boolean shouldAlignBubbleBarWithHotseat() {
-        return isQsbInline || mDeviceProperties.isGestureMode();
+        return !hasHotseatQsb() || isQsbInline || mDeviceProperties.isGestureMode();
+    }
+
+    private boolean hasHotseatQsb() {
+        return mIsHotseatQsbVisible;
+    }
+
+    private boolean isHotseatQsbInline() {
+        return hasHotseatQsb() && isQsbInline;
+    }
+
+    private int getHotseatQsbSpace() {
+        return hasHotseatQsb() ? hotseatQsbSpace : 0;
+    }
+
+    private int getHotseatQsbVisualHeight() {
+        return hasHotseatQsb() ? getHotseatProfile().getQsbVisualHeight() : 0;
     }
 
     /**
