@@ -1,31 +1,29 @@
 package com.android.launcher3.qsb;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.SystemClock;
+import android.util.Log;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import androidx.core.view.ViewCompat;
-import com.android.launcher3.BaseActivity;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
-import com.android.launcher3.qsb.QsbContainerView;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 
 public class QsbLayout extends FrameLayout implements
         SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String TAG = "QsbLayout";
+
     ImageView mAssistantIcon;
+    ImageView mGeminiIcon;
     ImageView mGoogleIcon;
     ImageView mLensIcon;
     Context mContext;
@@ -44,6 +42,7 @@ public class QsbLayout extends FrameLayout implements
     protected void onFinishInflate() {
         super.onFinishInflate();
         mAssistantIcon = findViewById(R.id.mic_icon);
+        mGeminiIcon = findViewById(R.id.gemini_icon);
         mGoogleIcon = findViewById(R.id.g_icon);
         mLensIcon = findViewById(R.id.lens_icon);
         setIcons();
@@ -66,6 +65,7 @@ public class QsbLayout extends FrameLayout implements
                 ).show();
             }
         });
+        setupGeminiIcon();
         enableLensIcon();
     }
 
@@ -98,13 +98,40 @@ public class QsbLayout extends FrameLayout implements
     private void setIcons() {
         if (Themes.isThemedIconEnabled(mContext)) {
             mAssistantIcon.setImageResource(R.drawable.ic_mic_themed);
+            mGeminiIcon.setImageResource(R.drawable.ic_gemini_themed);
             mGoogleIcon.setImageResource(R.drawable.ic_super_g_themed);
             mLensIcon.setImageResource(R.drawable.ic_lens_themed);
         } else {
             mAssistantIcon.setImageResource(R.drawable.ic_mic_color);
+            mGeminiIcon.setImageResource(R.drawable.ic_gemini_color);
             mGoogleIcon.setImageResource(R.drawable.ic_super_g_color);
             mLensIcon.setImageResource(R.drawable.ic_lens_color);
         }
+    }
+
+    private void setupGeminiIcon() {
+        if (mGeminiIcon == null) {
+            return;
+        }
+
+        mGeminiIcon.setVisibility(View.VISIBLE);
+        mGeminiIcon.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Utilities.GEMINI_URI))
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .setPackage(Utilities.GSA_PACKAGE);
+
+            try {
+                view.getContext().startActivity(intent);
+                return;
+            } catch (Exception e) {
+                Log.e(TAG, "Gemini launch failed", e);
+                android.widget.Toast.makeText(
+                        mContext,
+                        "Google Gemini not available",
+                        android.widget.Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
     }
 
     private void enableLensIcon() {
