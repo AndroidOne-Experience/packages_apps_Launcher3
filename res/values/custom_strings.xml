@@ -28,6 +28,7 @@
     <string name="label_gemini_search">AI mode</string>
     <string name="hotseat_label_lens">Google Lens</string>
     <string name="hotseat_label_voice_search">Voice search</string>
+    <string name="hotseat_label_music_search">Music search</string>
 
     <!-- Recents -->
     <string name="action_lens">Lens</string>

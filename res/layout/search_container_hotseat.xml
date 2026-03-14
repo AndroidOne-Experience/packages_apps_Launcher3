@@ -50,11 +50,11 @@
             android:layout_marginStart="-6dp"
             android:background="@drawable/pill_ripple"
             android:clickable="true"
-            android:contentDescription="@string/hotseat_label_voice_search"
+            android:contentDescription="@string/hotseat_label_music_search"
             android:scaleType="fitCenter"
             android:focusable="false"
             android:padding="@dimen/qsb_icon_padding"
-            tools:src="@drawable/ic_mic_color" />
+            tools:src="@drawable/ic_music_color" />
 
         <ImageButton
             android:id="@+id/lens_icon"
