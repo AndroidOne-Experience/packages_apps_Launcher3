@@ -297,7 +297,10 @@ public class GridCustomizationsProxy implements ProxyProvider {
                 if (match == null) {
                     return UPDATE_SETTING_FAILURE;
                 }
-                mIdp.setCurrentGrid(gridName);
+                boolean shouldResetWorkspace =
+                        !TextUtils.equals(InvariantDeviceProfile.getCurrentGridName(mContext),
+                                gridName);
+                mIdp.setCurrentGrid(gridName, shouldResetWorkspace);
 
                 LauncherModel launcherModel = LauncherAppState.getInstance(mContext).getModel();
                 if (Flags.newCustomizationPickerUi() && launcherModel.isActive()) {

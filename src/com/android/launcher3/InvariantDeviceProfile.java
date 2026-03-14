@@ -546,13 +546,35 @@ public class InvariantDeviceProfile {
      * migration.
      */
     public void setCurrentGrid(String newGridName) {
-        if (TextUtils.equals(mPrefs.get(GRID_NAME), newGridName)) return;
-        mPrefs.put(GRID_NAME, newGridName);
+        setCurrentGrid(newGridName, false);
+    }
+
+    /**
+     * Updates the current grid and optionally resets the selected grid database to the default
+     * workspace layout for that grid.
+     */
+    public void setCurrentGrid(String newGridName, boolean resetWorkspace) {
+        if (resetWorkspace) {
+            mPrefs.putSync(
+                    GRID_NAME.to(newGridName),
+                    LauncherPrefs.APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(true));
+        } else {
+            if (TextUtils.equals(mPrefs.get(GRID_NAME), newGridName)) return;
+            mPrefs.put(GRID_NAME, newGridName);
+        }
         mMainExecutor.execute(() -> {
             Trace.beginSection("InvariantDeviceProfile#setCurrentGrid");
             onConfigChanged();
             Trace.endSection();
         });
+    }
+
+    public void setCurrentGrid(Context context, String newGridName) {
+        setCurrentGrid(newGridName, false);
+    }
+
+    public void setCurrentGrid(Context context, String newGridName, boolean resetWorkspace) {
+        setCurrentGrid(newGridName, resetWorkspace);
     }
 
     private Object[] toModelState() {

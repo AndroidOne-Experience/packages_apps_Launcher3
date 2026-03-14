@@ -1001,7 +1001,6 @@ public final class Utilities {
     }
 
     /**
-<<<<<<< HEAD
      * Returns current icon shape to use for badges if flag is on, otherwise null.
      */
     @Nullable

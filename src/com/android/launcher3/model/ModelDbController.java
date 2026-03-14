@@ -17,6 +17,7 @@ package com.android.launcher3.model;
 
 import static android.provider.BaseColumns._ID;
 
+import static com.android.launcher3.LauncherPrefs.APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE;
 import static com.android.launcher3.LauncherPrefs.DB_FILE;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER;
 import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE;
@@ -328,12 +329,48 @@ public class ModelDbController {
         return false;
     }
 
+    private boolean shouldResetGridToDefaultWorkspace() {
+        return mPrefs.get(APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE);
+    }
+
+    private void resetTargetGridDbToDefaultWorkspace() throws Exception {
+        String targetDbName = new DeviceGridState(mIdp).getDbFile();
+        DatabaseHelper oldHelper = mOpenHelper;
+        mOpenHelper = (mContext instanceof SandboxContext) ? oldHelper
+                : createDatabaseHelper(true /* forMigration */, targetDbName);
+        try {
+            FileLog.d(TAG, "Resetting launcher database to default workspace for "
+                    + targetDbName);
+            mOpenHelper.createEmptyDB(mOpenHelper.getWritableDatabase());
+            mPrefs.putSync(
+                    getEmptyDbCreatedKey(mOpenHelper.getDatabaseName()).to(true),
+                    APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(false));
+
+            // Update the persisted grid state so the loader targets the selected grid DB.
+            new DeviceGridState(mIdp).writeToPrefs(mContext);
+        } catch (Exception e) {
+            mPrefs.putSync(
+                    APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(false));
+            throw e;
+        } finally {
+            if (mOpenHelper != oldHelper) {
+                oldHelper.close();
+            }
+        }
+    }
+
     /**
      * Migrates the DB. If the migration failed, it clears the DB.
      */
     public void attemptMigrateDb(LauncherRestoreEventLogger restoreEventLogger,
             ModelDelegate modelDelegate) throws Exception {
         createDbIfNotExists();
+
+        if (shouldResetGridToDefaultWorkspace()) {
+            resetTargetGridDbToDefaultWorkspace();
+            return;
+        }
+
         if (shouldResetDb()) {
             resetLauncherDb(restoreEventLogger);
             return;
