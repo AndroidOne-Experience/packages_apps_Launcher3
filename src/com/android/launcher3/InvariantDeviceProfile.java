@@ -558,7 +558,21 @@ public class InvariantDeviceProfile implements SafeCloseable {
      * migration.
      */
     public void setCurrentGrid(Context context, String newGridName) {
-        LauncherPrefs.get(context).put(GRID_NAME, newGridName);
+        setCurrentGrid(context, newGridName, false);
+    }
+
+    /**
+     * Updates the current grid and optionally resets the selected grid database to the default
+     * workspace layout for that grid.
+     */
+    public void setCurrentGrid(Context context, String newGridName, boolean resetWorkspace) {
+        if (resetWorkspace) {
+            LauncherPrefs.get(context).putSync(
+                    GRID_NAME.to(newGridName),
+                    LauncherPrefs.APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(true));
+        } else {
+            LauncherPrefs.get(context).putSync(GRID_NAME.to(newGridName));
+        }
         MAIN_EXECUTOR.execute(() -> {
             Trace.beginSection("InvariantDeviceProfile#setCurrentGrid");
             onConfigChanged(context.getApplicationContext());

@@ -84,6 +84,8 @@ abstract class LauncherPrefs : SafeCloseable {
         const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
         const val SMARTSPACE_ON_HOME_SCREEN_KEY = "pref_smartspace_home_screen"
         const val HOTSEAT_SEARCH_BAR_KEY = "pref_hotseat_search_bar"
+        const val APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE_KEY =
+            "apply_default_workspace_on_grid_change"
         @JvmField
         val ICON_STATE = nonRestorableItem("pref_icon_shape_path", "", EncryptionType.ENCRYPTED)
 
@@ -124,6 +126,13 @@ abstract class LauncherPrefs : SafeCloseable {
             )
         @JvmField val SMARTSPACE_ON_HOME_SCREEN = backedUpItem(SMARTSPACE_ON_HOME_SCREEN_KEY, true)
         @JvmField val HOTSEAT_SEARCH_BAR = backedUpItem(HOTSEAT_SEARCH_BAR_KEY, true)
+        @JvmField
+        val APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE =
+            nonRestorableItem(
+                APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE_KEY,
+                false,
+                EncryptionType.ENCRYPTED,
+            )
         @JvmField
         val RESTORE_DEVICE =
             backedUpItem(

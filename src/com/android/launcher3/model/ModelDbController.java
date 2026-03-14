@@ -20,6 +20,7 @@ import static android.util.Base64.NO_PADDING;
 import static android.util.Base64.NO_WRAP;
 
 import static com.android.launcher3.DefaultLayoutParser.RES_PARTNER_DEFAULT_LAYOUT;
+import static com.android.launcher3.LauncherPrefs.APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE;
 import static com.android.launcher3.LauncherPrefs.DB_FILE;
 import static com.android.launcher3.LauncherPrefs.NO_DB_FILES_RESTORED;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER;
@@ -356,11 +357,47 @@ public class ModelDbController {
         return false;
     }
 
+    private boolean shouldResetGridToDefaultWorkspace() {
+        return LauncherPrefs.get(mContext).get(APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE);
+    }
+
+    private void resetTargetGridDbToDefaultWorkspace() throws Exception {
+        InvariantDeviceProfile idp = LauncherAppState.getIDP(mContext);
+        String targetDbName = new DeviceGridState(idp).getDbFile();
+        DatabaseHelper oldHelper = mOpenHelper;
+        mOpenHelper = (mContext instanceof SandboxContext) ? oldHelper
+                : createDatabaseHelper(true /* forMigration */, targetDbName);
+        try {
+            FileLog.d(TAG, "Resetting launcher database to default workspace for "
+                    + targetDbName);
+            mOpenHelper.createEmptyDB(mOpenHelper.getWritableDatabase());
+            LauncherPrefs.get(mContext).putSync(
+                    getEmptyDbCreatedKey(mOpenHelper.getDatabaseName()).to(true),
+                    APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(false));
+
+            // Update the persisted grid state so the loader targets the selected grid DB.
+            new DeviceGridState(idp).writeToPrefs(mContext);
+        } catch (Exception e) {
+            LauncherPrefs.get(mContext).putSync(
+                    APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE.to(false));
+            throw e;
+        } finally {
+            if (mOpenHelper != oldHelper) {
+                oldHelper.close();
+            }
+        }
+    }
+
     /**
      * Migrates the DB. If the migration failed, it clears the DB.
      */
     public void attemptMigrateDb(LauncherRestoreEventLogger restoreEventLogger) throws Exception {
         createDbIfNotExists();
+
+        if (shouldResetGridToDefaultWorkspace()) {
+            resetTargetGridDbToDefaultWorkspace();
+            return;
+        }
 
         if (shouldResetDb()) {
             resetLauncherDb(restoreEventLogger);
@@ -435,6 +472,15 @@ public class ModelDbController {
      */
     private boolean migrateGridIfNeeded() {
         createDbIfNotExists();
+        if (shouldResetGridToDefaultWorkspace()) {
+            try {
+                resetTargetGridDbToDefaultWorkspace();
+                return true;
+            } catch (Exception e) {
+                FileLog.e(TAG, "Failed to reset grid to its default workspace", e);
+                return false;
+            }
+        }
         if (LauncherPrefs.get(mContext).get(getEmptyDbCreatedKey())) {
             // If we have already create a new DB, ignore migration
             FileLog.d(TAG, "migrateGridIfNeeded: new DB already created, skipping migration");

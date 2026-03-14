@@ -234,7 +234,10 @@ public class GridCustomizationsProvider extends ContentProvider {
                     return 0;
                 }
 
-                idp.setCurrentGrid(context, gridName);
+                boolean shouldResetWorkspace =
+                        !TextUtils.equals(InvariantDeviceProfile.getCurrentGridName(context),
+                                gridName);
+                idp.setCurrentGrid(context, gridName, shouldResetWorkspace);
                 if (Flags.newCustomizationPickerUi()) {
                     try {
                         // Wait for device profile to be fully reloaded and applied to the launcher
