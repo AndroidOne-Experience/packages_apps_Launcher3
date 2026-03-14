@@ -99,6 +99,7 @@ public class InvariantDeviceProfile implements SafeCloseable {
     public static final int TYPE_MULTI_DISPLAY = 1;
     public static final int TYPE_TABLET = 2;
 
+    private static final String DEFAULT_PHONE_GRID_NAME = "5_by_6";
     private static final float ICON_SIZE_DEFINED_IN_APP_DP = 48;
 
     // Constants that affects the interpolation curve between statically defined device profile
@@ -345,7 +346,15 @@ public class InvariantDeviceProfile implements SafeCloseable {
     }
 
     public static String getCurrentGridName(Context context) {
-        return LauncherPrefs.get(context).get(GRID_NAME);
+        String savedGridName = LauncherPrefs.get(context).get(GRID_NAME);
+        if (!TextUtils.isEmpty(savedGridName)) {
+            return savedGridName;
+        }
+        int deviceType = DisplayController.INSTANCE.get(context).getInfo().getDeviceType();
+        if (deviceType == TYPE_PHONE || deviceType == TYPE_MULTI_DISPLAY) {
+            return DEFAULT_PHONE_GRID_NAME;
+        }
+        return null;
     }
 
     private String initGrid(Context context, String gridName) {
@@ -374,7 +383,8 @@ public class InvariantDeviceProfile implements SafeCloseable {
                                 : new ArrayList<>(allOptionsFilteredByColCount),
                         displayInfo.getDeviceType());
 
-        if (!displayOption.grid.name.equals(gridName)) {
+        String persistedGridName = LauncherPrefs.get(context).get(GRID_NAME);
+        if (!TextUtils.equals(persistedGridName, displayOption.grid.name)) {
             LauncherPrefs.get(context).put(GRID_NAME, displayOption.grid.name);
         }
 
