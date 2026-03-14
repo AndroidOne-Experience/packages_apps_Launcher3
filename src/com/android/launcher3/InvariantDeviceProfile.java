@@ -121,6 +121,7 @@ public class InvariantDeviceProfile {
     public static final int TYPE_TABLET = 2;
     public static final int TYPE_DESKTOP = 3;
 
+    private static final String DEFAULT_PHONE_GRID_NAME = "5_by_6";
     private static final float ICON_SIZE_DEFINED_IN_APP_DP = 48;
 
     // Constants that affects the interpolation curve between statically defined device profile
@@ -291,7 +292,7 @@ public class InvariantDeviceProfile {
         mThemeManager = themeManager;
         mMainExecutor = mainExecutor;
 
-        String gridName = prefs.get(GRID_NAME);
+        String gridName = getCurrentGridName(context);
         initGrid(gridName);
         mThemeManager.generateIconShape(iconBitmapSize);
 
@@ -331,6 +332,18 @@ public class InvariantDeviceProfile {
         lifeCycle.addCloseable(localeReceiver);
     }
 
+    public static String getCurrentGridName(Context context) {
+        String savedGridName = LauncherPrefs.get(context).get(GRID_NAME);
+        if (!TextUtils.isEmpty(savedGridName)) {
+            return savedGridName;
+        }
+        int deviceType = DisplayController.INSTANCE.get(context).getInfo().getDeviceType();
+        if (deviceType == TYPE_PHONE || deviceType == TYPE_MULTI_DISPLAY) {
+            return DEFAULT_PHONE_GRID_NAME;
+        }
+        return null;
+    }
+
     private void initGrid(String gridName) {
         Info displayInfo = mDisplayController.getInfo();
         List<DisplayOption> allOptions = getPredefinedDeviceProfiles(
@@ -351,7 +364,8 @@ public class InvariantDeviceProfile {
                                 : new ArrayList<>(allOptionsFilteredByColCount),
                         displayInfo.getDeviceType());
 
-        if (!displayOption.grid.name.equals(gridName)) {
+        String persistedGridName = mPrefs.get(GRID_NAME);
+        if (!TextUtils.equals(persistedGridName, displayOption.grid.name)) {
             mPrefs.put(GRID_NAME, displayOption.grid.name);
         }
 
