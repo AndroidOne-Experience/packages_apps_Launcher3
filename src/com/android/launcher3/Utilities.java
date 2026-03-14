@@ -154,6 +154,8 @@ public final class Utilities {
     public static final String LENS_URI = "google://lens";
     public static final String LENS_SHARE_ACTIVITY = "com.google.android.apps.search.lens.LensShareEntryPointActivity";
     public static final String GEMINI_URI = "https://bard.google.com/android?source=bardshell";
+    public static final String MUSIC_SEARCH_ACTION =
+            "com.google.android.googlequicksearchbox.MUSIC_SEARCH";
 
     /**
      * Returns true if theme is dark.
