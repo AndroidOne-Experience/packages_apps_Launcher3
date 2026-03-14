@@ -235,6 +235,7 @@ public class DeviceProfile {
     public final int hotseatQsbHeight;
     public final int hotseatQsbVisualHeight;
     private final int hotseatQsbShadowHeight;
+    private final boolean mIsHotseatQsbVisible;
     public int hotseatBorderSpace;
     private final int mMinHotseatIconSpacePx;
     private final int mMinHotseatQsbWidthPx;
@@ -366,6 +367,7 @@ public class DeviceProfile {
         hotseatQsbHeight = 0;
         hotseatQsbVisualHeight = 0;
         hotseatQsbShadowHeight = 0;
+        mIsHotseatQsbVisible = false;
         hotseatBorderSpace = 0;
         mMinHotseatIconSpacePx = 0;
         mMinHotseatQsbWidthPx = 0;
@@ -620,6 +622,9 @@ public class DeviceProfile {
                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
                 && hotseatQsbHeight > 0;
         isQsbInline = isQsbInline(inv);
+        mIsHotseatQsbVisible = !isVerticalBarLayout()
+                && hotseatQsbHeight > 0
+                && LauncherPrefs.shouldShowHotseatSearchBar(context);
 
         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
         numShownHotseatIcons =
@@ -683,6 +688,11 @@ public class DeviceProfile {
 
             } else {
                 hotseatBarBottomSpacePx = hotseatBarBottomSpace;
+            }
+
+            if (!mIsHotseatQsbVisible) {
+                hotseatBarBottomSpacePx +=
+                        res.getDimensionPixelSize(R.dimen.hotseat_qsb_hidden_bottom_space_extra);
             }
         }
 
@@ -958,13 +968,13 @@ public class DeviceProfile {
         if (isVerticalBarLayout()) {
             hotseatBarSizePx = hotseatIconSizePx + mHotseatBarEdgePaddingPx
                     + mHotseatBarWorkspaceSpacePx;
-        } else if (isQsbInline) {
+        } else if (isHotseatQsbInline()) {
             hotseatBarSizePx = Math.max(hotseatIconSizePx, hotseatQsbVisualHeight)
                     + hotseatBarBottomSpacePx;
         } else {
             hotseatBarSizePx = hotseatIconSizePx
-                    + hotseatQsbSpace
-                    + hotseatQsbVisualHeight
+                    + getHotseatQsbSpace()
+                    + getHotseatQsbVisualHeight()
                     + hotseatBarBottomSpacePx;
         }
     }
@@ -987,7 +997,7 @@ public class DeviceProfile {
                 updateHotseatWidthAndBorderSpace(mHotseatColumnSpan + 2);
             }
         }
-        if (isQsbInline) {
+        if (isHotseatQsbInline()) {
             // If QSB is inline, reduce column span until it fits.
             int maxHotseatWidthAllowedPx = getIconToIconWidthForColumns(numWorkspaceColumns);
             int minHotseatWidthRequiredPx =
@@ -999,7 +1009,7 @@ public class DeviceProfile {
                         mMinHotseatQsbWidthPx + hotseatBorderSpace + mHotseatWidthPx;
             }
         }
-        hotseatQsbWidth = calculateQsbWidth(hotseatBorderSpace);
+        hotseatQsbWidth = hasHotseatQsb() ? calculateQsbWidth(hotseatBorderSpace) : 0;
 
         // Spaces should be correct when the nav buttons are not inline
         if (!areNavButtonsInline) {
@@ -1009,9 +1019,11 @@ public class DeviceProfile {
         // The side space with inline buttons should be what is defined in InvariantDeviceProfile
         int sideSpacePx = inlineNavButtonsEndSpacingPx;
         int maxHotseatWidthPx = availableWidthPx - sideSpacePx - hotseatBarEndOffset;
-        int maxHotseatIconsWidthPx = maxHotseatWidthPx - (isQsbInline ? hotseatQsbWidth : 0);
+        int maxHotseatIconsWidthPx =
+                maxHotseatWidthPx - (isHotseatQsbInline() ? hotseatQsbWidth : 0);
         hotseatBorderSpace = calculateHotseatBorderSpace(maxHotseatIconsWidthPx,
-                (isQsbInline ? 1 : 0) + /* border between nav buttons and first icon */ 1);
+                (isHotseatQsbInline() ? 1 : 0)
+                        + /* border between nav buttons and first icon */ 1);
 
         if (hotseatBorderSpace >= mMinHotseatIconSpacePx) {
             return;
@@ -1022,7 +1034,7 @@ public class DeviceProfile {
         int requiredWidth = getHotseatRequiredWidth();
 
         // If there is an inline qsb, change its size
-        if (isQsbInline) {
+        if (isHotseatQsbInline()) {
             hotseatQsbWidth -= requiredWidth - maxHotseatWidthPx;
             if (hotseatQsbWidth >= mMinHotseatQsbWidthPx) {
                 return;
@@ -1032,13 +1044,15 @@ public class DeviceProfile {
             hotseatQsbWidth = mMinHotseatQsbWidthPx;
         }
 
-        maxHotseatIconsWidthPx = maxHotseatWidthPx - (isQsbInline ? hotseatQsbWidth : 0);
+        maxHotseatIconsWidthPx =
+                maxHotseatWidthPx - (isHotseatQsbInline() ? hotseatQsbWidth : 0);
 
         // If it still doesn't fit, start removing icons
         do {
             numShownHotseatIcons--;
             hotseatBorderSpace = calculateHotseatBorderSpace(maxHotseatIconsWidthPx,
-                    (isQsbInline ? 1 : 0) + /* border between nav buttons and first icon */ 1);
+                    (isHotseatQsbInline() ? 1 : 0)
+                            + /* border between nav buttons and first icon */ 1);
         } while (hotseatBorderSpace < mMinHotseatIconSpacePx && numShownHotseatIcons > 1);
     }
 
@@ -1951,7 +1965,8 @@ public class DeviceProfile {
                 endSpacing = availableWidthPx - hotseatWidth - startSpacing + hotseatBorderSpace;
             } else {
                 startSpacing = isTablet ? (availableWidthPx - hotseatWidth) / 2 :
-                            (availableWidthPx - hotseatQsbWidth) / 2;
+                            (availableWidthPx - (hasHotseatQsb() ? hotseatQsbWidth : hotseatWidth))
+                                    / 2;
                 endSpacing = startSpacing;
             }
             startSpacing += getAdditionalQsbSpace();
@@ -1972,7 +1987,7 @@ public class DeviceProfile {
                 hotseatBarPadding.right = endSpacing;
             }
 
-        } else if (mIsScalableGrid) {
+        } else if (mIsScalableGrid && hasHotseatQsb()) {
             int iconExtraSpacePx = iconSizePx - getIconVisibleSizePx(iconSizePx);
             int sideSpacing = (availableWidthPx - (hotseatQsbWidth + iconExtraSpacePx)) / 2;
             hotseatBarPadding.set(sideSpacing,
@@ -2032,7 +2047,7 @@ public class DeviceProfile {
     }
 
     private int getAdditionalQsbSpace() {
-        return isTablet && isQsbInline ? hotseatQsbWidth + hotseatBorderSpace : 0;
+        return isTablet && isHotseatQsbInline() ? hotseatQsbWidth + hotseatBorderSpace : 0;
     }
 
     /**
@@ -2049,7 +2064,9 @@ public class DeviceProfile {
      * Returns the number of pixels the QSB is translated from the bottom of the screen.
      */
     public int getQsbOffsetY() {
-        if (isQsbInline) {
+        if (!hasHotseatQsb()) {
+            return getHotseatBarBottomPadding();
+        } else if (isQsbInline) {
             return getHotseatBarBottomPadding() - ((hotseatQsbHeight - hotseatCellHeightPx) / 2);
         } else if (isTaskbarPresent) { // QSB on top
             return hotseatBarSizePx - hotseatQsbHeight + hotseatQsbShadowHeight;
@@ -2076,8 +2093,8 @@ public class DeviceProfile {
     public int getBubbleBarVerticalCenterForHome() {
         if (shouldAlignBubbleBarWithHotseat()) {
             return hotseatBarSizePx
-                    - (isQsbInline ? 0 : hotseatQsbVisualHeight)
-                    - hotseatQsbSpace
+                    - (isHotseatQsbInline() ? 0 : getHotseatQsbVisualHeight())
+                    - getHotseatQsbSpace()
                     - (hotseatCellHeightPx / 2)
                     + ((hotseatCellHeightPx - iconSizePx) / 2);
         } else {
@@ -2092,7 +2109,23 @@ public class DeviceProfile {
 
     /** Returns whether bubble bar should be aligned with the hotseat. */
     public boolean shouldAlignBubbleBarWithHotseat() {
-        return isQsbInline || isGestureMode;
+        return !hasHotseatQsb() || isQsbInline || isGestureMode;
+    }
+
+    private boolean hasHotseatQsb() {
+        return mIsHotseatQsbVisible;
+    }
+
+    private boolean isHotseatQsbInline() {
+        return hasHotseatQsb() && isQsbInline;
+    }
+
+    private int getHotseatQsbSpace() {
+        return hasHotseatQsb() ? hotseatQsbSpace : 0;
+    }
+
+    private int getHotseatQsbVisualHeight() {
+        return hasHotseatQsb() ? hotseatQsbVisualHeight : 0;
     }
 
     /**

@@ -83,6 +83,7 @@ abstract class LauncherPrefs : SafeCloseable {
         const val TASKBAR_PINNING_DESKTOP_MODE_KEY = "TASKBAR_PINNING_DESKTOP_MODE_KEY"
         const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
         const val SMARTSPACE_ON_HOME_SCREEN_KEY = "pref_smartspace_home_screen"
+        const val HOTSEAT_SEARCH_BAR_KEY = "pref_hotseat_search_bar"
         @JvmField
         val ICON_STATE = nonRestorableItem("pref_icon_shape_path", "", EncryptionType.ENCRYPTED)
 
@@ -122,6 +123,7 @@ abstract class LauncherPrefs : SafeCloseable {
                 EncryptionType.DEVICE_PROTECTED,
             )
         @JvmField val SMARTSPACE_ON_HOME_SCREEN = backedUpItem(SMARTSPACE_ON_HOME_SCREEN_KEY, true)
+        @JvmField val HOTSEAT_SEARCH_BAR = backedUpItem(HOTSEAT_SEARCH_BAR_KEY, true)
         @JvmField
         val RESTORE_DEVICE =
             backedUpItem(
@@ -197,6 +199,10 @@ abstract class LauncherPrefs : SafeCloseable {
             BuildConfig.QSB_ON_FIRST_SCREEN &&
                 !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET &&
                 get(context).get(SMARTSPACE_ON_HOME_SCREEN)
+
+        @JvmStatic
+        fun shouldShowHotseatSearchBar(context: Context): Boolean =
+            get(context).get(HOTSEAT_SEARCH_BAR)
 
         @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
         @JvmStatic

@@ -44,6 +44,7 @@
     <dimen name="qsb_widget_height">64dp</dimen>
     <dimen name="qsb_icon_width">56dp</dimen>
     <dimen name="qsb_icon_padding">10dp</dimen>
+    <dimen name="hotseat_qsb_hidden_bottom_space_extra">24dp</dimen>
 
     <!-- Scalable Grid -->
     <dimen name="min_qsb_margin">8dp</dimen>

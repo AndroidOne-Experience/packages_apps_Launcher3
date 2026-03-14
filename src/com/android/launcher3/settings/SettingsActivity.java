@@ -309,6 +309,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
                 case KEY_DRAWER_OPEN_KEYBOARD:
+                case LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY:
                     InvariantDeviceProfile.INSTANCE.get(getContext())
                             .onConfigChanged(getActivity().getApplicationContext());
                     break;

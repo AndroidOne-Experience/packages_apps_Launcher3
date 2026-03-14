@@ -23,6 +23,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -51,7 +52,8 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * View class that represents the bottom row of the home screen.
  */
-public class Hotseat extends CellLayout implements Insettable {
+public class Hotseat extends CellLayout implements Insettable,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final int ALPHA_CHANNEL_TASKBAR_ALIGNMENT = 0;
     public static final int ALPHA_CHANNEL_PREVIEW_RENDERER = 1;
@@ -110,6 +112,27 @@ public class Hotseat extends CellLayout implements Insettable {
         mIconsTranslationXFactory = new MultiPropertyFactory<>(getShortcutsAndWidgets(),
                 VIEW_TRANSLATE_X, ICONS_TRANSLATION_X_CHANNELS_COUNT, Float::sum);
         mQsbAlphaChannels = new MultiValueAlpha(mQsb, ALPHA_CHANNEL_CHANNELS_COUNT);
+        updateQsbVisibility();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LauncherPrefs.getPrefs(getContext()).registerOnSharedPreferenceChangeListener(this);
+        updateQsbVisibility();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        LauncherPrefs.getPrefs(getContext()).unregisterOnSharedPreferenceChangeListener(this);
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY.equals(key)) {
+            updateQsbVisibility();
+        }
     }
 
     /** Provides translation X for hotseat icons for the channel. */
@@ -238,7 +261,6 @@ public class Hotseat extends CellLayout implements Insettable {
         DeviceProfile grid = mActivity.getDeviceProfile();
 
         if (grid.isVerticalBarLayout()) {
-            mQsb.setVisibility(View.GONE);
             lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
             if (grid.isSeascape()) {
                 lp.gravity = Gravity.LEFT;
@@ -248,12 +270,12 @@ public class Hotseat extends CellLayout implements Insettable {
                 lp.width = grid.hotseatBarSizePx + insets.right;
             }
         } else {
-            mQsb.setVisibility(View.VISIBLE);
             lp.gravity = Gravity.BOTTOM;
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
             lp.height = grid.hotseatBarSizePx;
         }
 
+        updateQsbVisibility();
         Rect padding = grid.getHotseatLayoutPadding(getContext());
         setPadding(padding.left, padding.top, padding.right, padding.bottom);
         setLayoutParams(lp);
@@ -298,15 +320,20 @@ public class Hotseat extends CellLayout implements Insettable {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        DeviceProfile dp = mActivity.getDeviceProfile();
-
-        mQsb.measure(MeasureSpec.makeMeasureSpec(dp.hotseatQsbWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(dp.hotseatQsbHeight, MeasureSpec.EXACTLY));
+        if (mQsb.getVisibility() != View.GONE) {
+            DeviceProfile dp = mActivity.getDeviceProfile();
+            mQsb.measure(MeasureSpec.makeMeasureSpec(dp.hotseatQsbWidth, MeasureSpec.EXACTLY),
+                    MeasureSpec.makeMeasureSpec(dp.hotseatQsbHeight, MeasureSpec.EXACTLY));
+        }
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
+
+        if (mQsb.getVisibility() == View.GONE) {
+            return;
+        }
 
         int qsbMeasuredWidth = mQsb.getMeasuredWidth();
         int left;
@@ -323,6 +350,13 @@ public class Hotseat extends CellLayout implements Insettable {
         int bottom = b - t - dp.getQsbOffsetY();
         int top = bottom - dp.hotseatQsbHeight;
         mQsb.layout(left, top, right, bottom);
+    }
+
+    private void updateQsbVisibility() {
+        DeviceProfile dp = ActivityContext.lookupContext(getContext()).getDeviceProfile();
+        boolean showQsb = !dp.isVerticalBarLayout()
+                && LauncherPrefs.shouldShowHotseatSearchBar(getContext());
+        mQsb.setVisibility(showQsb ? View.VISIBLE : View.GONE);
     }
 
     /**
