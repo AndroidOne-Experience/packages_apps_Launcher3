@@ -1377,16 +1377,9 @@ public class DeviceProfile {
         if (isVerticalLayout && !mIsResponsiveGrid) {
             hideWorkspaceLabelsIfNotEnoughSpace();
         }
-        if ((Flags.enableTwolineToggle()
-                && LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE.get(context))) {
-            if (!isEnglishLanguage(context)) {
-                // Set toggle preference value to false if not english here as it's possible the
-                // preference is stale after language change.
-                LauncherPrefs.get(context).put(LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE, false);
-            } else {
-                // Add extra textHeight to the existing allAppsCellHeight.
-                allAppsCellHeightPx += Utilities.calculateTextHeight(allAppsIconTextSizePx);
-            }
+        if (isEnglishLanguage(context)) {
+            // Add extra textHeight to the existing allAppsCellHeight.
+            allAppsCellHeightPx += Utilities.calculateTextHeight(allAppsIconTextSizePx);
         }
 
         updateHotseatSizes(iconSizePx);

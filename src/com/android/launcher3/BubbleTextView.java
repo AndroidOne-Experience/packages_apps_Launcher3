@@ -493,8 +493,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
      */
     protected boolean shouldUseTwoLine() {
         return isCurrentLanguageEnglish() && (mDisplay == DISPLAY_ALL_APPS
-                || mDisplay == DISPLAY_PREDICTION_ROW) && (Flags.enableTwolineToggle()
-                && LauncherPrefs.ENABLE_TWOLINE_ALLAPPS_TOGGLE.get(getContext()));
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_WORKSPACE);
     }
 
     protected boolean isCurrentLanguageEnglish() {
@@ -872,11 +872,12 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                     mAppTitleHorizontalPadding + mRoundRectPadding,
                     getPaddingBottom());
         }
-        // Only apply two line for all_apps and device search only if necessary.
+        // Only apply two line for supported displays (all apps, prediction row, workspace) and
+        // only if necessary.
         if (shouldUseTwoLine() && (mLastOriginalText != null)) {
             int allowedVerticalSpace = height - getPaddingTop() - getPaddingBottom()
-                    - mDeviceProfile.allAppsIconSizePx
-                    - mDeviceProfile.allAppsIconDrawablePaddingPx;
+                    - mIconSize
+                    - getCompoundDrawablePadding();
             CharSequence modifiedString = modifyTitleToSupportMultiLine(
                     MeasureSpec.getSize(widthMeasureSpec) - getCompoundPaddingLeft()
                             - getCompoundPaddingRight(),
