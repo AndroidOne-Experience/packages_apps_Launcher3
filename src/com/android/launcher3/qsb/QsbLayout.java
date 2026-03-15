@@ -98,7 +98,8 @@ public class QsbLayout extends FrameLayout implements
     private void setIcons() {
         if (Themes.isThemedIconEnabled(mContext)) {
             mAssistantIcon.setImageResource(R.drawable.ic_music_themed);
-            mGeminiIcon.setImageResource(R.drawable.ic_gemini_themed);
+            // Keep brand icon for Gemini in full color even when themed icons are enabled.
+            mGeminiIcon.setImageResource(R.drawable.ic_gemini_color);
             mGoogleIcon.setImageResource(R.drawable.ic_super_g_themed);
             mLensIcon.setImageResource(R.drawable.ic_lens_themed);
         } else {
