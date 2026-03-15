@@ -38,6 +38,9 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.content.res.Configuration;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -163,6 +166,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     private final MultiTranslateDelegate mTranslateDelegate = new MultiTranslateDelegate(this);
     private final ActivityContext mActivity;
     private FastBitmapDrawable mIcon;
+    private int mForcedMonoColor = Color.TRANSPARENT;
+    private ColorMatrixColorFilter mForcedMonoFilter;
     private DeviceProfile mDeviceProfile;
     private boolean mCenterVertically;
 
@@ -484,8 +489,66 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     }
 
     protected boolean shouldUseTheme() {
-        return (mDisplay == DISPLAY_WORKSPACE || mDisplay == DISPLAY_FOLDER
-                || mDisplay == DISPLAY_TASKBAR) && Themes.isThemedIconEnabled(getContext());
+        return (mDisplay == DISPLAY_WORKSPACE
+                || mDisplay == DISPLAY_FOLDER
+                || mDisplay == DISPLAY_TASKBAR
+                || mDisplay == DISPLAY_ALL_APPS
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_SEARCH_RESULT_APP_ROW)
+                && Themes.isThemedIconEnabled(getContext());
+    }
+
+    private boolean shouldForceMonochromeInAllApps() {
+        return Themes.isThemedIconEnabled(getContext())
+                && (mDisplay == DISPLAY_WORKSPACE
+                || mDisplay == DISPLAY_ALL_APPS
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_SEARCH_RESULT_APP_ROW);
+    }
+
+    private ColorMatrixColorFilter getForcedMonoFilter() {
+        int fg = getForcedMonoColor();
+        if (mForcedMonoFilter == null || mForcedMonoColor != fg) {
+            mForcedMonoColor = fg;
+            float r = Color.red(fg) / 255f;
+            float g = Color.green(fg) / 255f;
+            float b = Color.blue(fg) / 255f;
+
+            ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0f);
+            ColorMatrix tint = new ColorMatrix(new float[] {
+                    r, 0f, 0f, 0f, 0f,
+                    0f, g, 0f, 0f, 0f,
+                    0f, 0f, b, 0f, 0f,
+                    0f, 0f, 0f, 1f, 0f
+            });
+            matrix.postConcat(tint);
+            mForcedMonoFilter = new ColorMatrixColorFilter(matrix);
+        }
+        return mForcedMonoFilter;
+    }
+
+    private int getForcedMonoColor() {
+        boolean isNight = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return isNight
+                ? getResources().getColor(android.R.color.system_accent1_100)
+                : getResources().getColor(android.R.color.system_neutral2_700);
+    }
+
+    private void applyForcedMonochromeIfNeeded(FastBitmapDrawable icon) {
+        if (icon == null) {
+            return;
+        }
+        if (shouldForceMonochromeInAllApps()) {
+            if (!icon.isThemed()) {
+                icon.setColorFilter(getForcedMonoFilter());
+            } else {
+                icon.setColorFilter(null);
+            }
+        } else {
+            icon.setColorFilter(null);
+        }
     }
 
     /**
@@ -1256,6 +1319,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
      * Sets the icon for this view based on the layout direction.
      */
     protected void setIcon(FastBitmapDrawable icon) {
+        applyForcedMonochromeIfNeeded(icon);
         if (mIsIconVisible) {
             applyCompoundDrawables(icon);
         }
