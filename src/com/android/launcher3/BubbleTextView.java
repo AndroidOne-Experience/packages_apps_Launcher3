@@ -551,6 +551,19 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
     }
 
+    public void applyForcedMonochromeToDrawable(Drawable drawable) {
+        if (!(drawable instanceof FastBitmapDrawable preview) || mIcon == null) {
+            return;
+        }
+        if (shouldForceMonochromeInAllApps() && !mIcon.isThemed()) {
+            preview.setColorFilter(getForcedMonoFilter());
+        }
+    }
+
+    public boolean shouldForceMonochromeForDrag() {
+        return shouldForceMonochromeInAllApps() && mIcon != null && !mIcon.isThemed();
+    }
+
     /**
      * Only if actual text can be displayed in two line, the {@code true} value will be effective.
      */

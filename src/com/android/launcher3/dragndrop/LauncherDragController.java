@@ -31,6 +31,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.AbstractFloatingView;
+import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.Launcher;
@@ -122,6 +123,9 @@ public class LauncherDragController extends DragController<Launcher> {
         // During a drag, we don't want to expose the descendendants of drag view to a11y users,
         // since those decendents are not a valid position in the workspace.
         dragView.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
+        if (originalView instanceof BubbleTextView btv) {
+            dragView.setForceMonochrome(btv.shouldForceMonochromeForDrag());
+        }
         dragView.setItemInfo(dragInfo);
         mDragObject.dragComplete = false;
 

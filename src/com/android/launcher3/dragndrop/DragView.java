@@ -32,9 +32,12 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
 import android.appwidget.AppWidgetHostView;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Rect;
@@ -115,6 +118,9 @@ public abstract class DragView<T extends Context & ActivityContext> extends Fram
     private SpringFloatValue mTranslateX, mTranslateY;
     private Path mScaledMaskPath;
     private Drawable mBadge;
+    private boolean mForceMonochrome;
+    private int mForcedMonoColor = Color.TRANSPARENT;
+    private ColorMatrixColorFilter mForcedMonoFilter;
 
     public DragView(T launcher, Drawable drawable, int registrationX,
             int registrationY, final float initialScale, final float scaleOnDrop,
@@ -237,6 +243,52 @@ public abstract class DragView<T extends Context & ActivityContext> extends Fram
         mOnShiftAnimEndCallback = callback;
     }
 
+    public void setForceMonochrome(boolean forceMonochrome) {
+        mForceMonochrome = forceMonochrome;
+    }
+
+    private ColorMatrixColorFilter getForcedMonoFilter() {
+        int fg = getForcedMonoColor();
+        if (mForcedMonoFilter == null || mForcedMonoColor != fg) {
+            mForcedMonoColor = fg;
+            float r = Color.red(fg) / 255f;
+            float g = Color.green(fg) / 255f;
+            float b = Color.blue(fg) / 255f;
+
+            ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0f);
+            ColorMatrix tint = new ColorMatrix(new float[] {
+                    r, 0f, 0f, 0f, 0f,
+                    0f, g, 0f, 0f, 0f,
+                    0f, 0f, b, 0f, 0f,
+                    0f, 0f, 0f, 1f, 0f
+            });
+            matrix.postConcat(tint);
+            mForcedMonoFilter = new ColorMatrixColorFilter(matrix);
+        }
+        return mForcedMonoFilter;
+    }
+
+    private int getForcedMonoColor() {
+        boolean isNight = (getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        return isNight
+                ? getResources().getColor(android.R.color.system_accent1_100)
+                : getResources().getColor(android.R.color.system_neutral2_700);
+    }
+
+    private void applyForcedMonochromeToSpringDrawables() {
+        if (!mForceMonochrome) {
+            return;
+        }
+        ColorFilter filter = getForcedMonoFilter();
+        mBgSpringDrawable.setColorFilter(filter);
+        mFgSpringDrawable.setColorFilter(filter);
+        if (mBadge != null) {
+            mBadge.setColorFilter(filter);
+        }
+    }
+
     /**
      * Initialize {@code #mIconDrawable} if the item can be represented using
      * an {@link AdaptiveIconDrawable} or {@link FolderAdaptiveIcon}.
@@ -294,6 +346,8 @@ public abstract class DragView<T extends Context & ActivityContext> extends Fram
                     mFgSpringDrawable = new ColorDrawable(Color.TRANSPARENT);
                 }
                 mFgSpringDrawable.setBounds(bounds);
+
+                applyForcedMonochromeToSpringDrawables();
 
                 new Handler(Looper.getMainLooper()).post(() -> mOnDragStartCallback.add(() -> {
                     // TODO: Consider fade-in animation

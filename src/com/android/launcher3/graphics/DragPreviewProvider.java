@@ -104,16 +104,21 @@ public class DragPreviewProvider {
 
         if (mView instanceof BubbleTextView btv
                 && btv.getIconDisplay() == DISPLAY_SEARCH_RESULT_APP_ROW) {
-            FastBitmapDrawable icon = ((BubbleTextView) mView).getIcon();
+            FastBitmapDrawable icon = btv.getIcon();
             Drawable drawable = icon.getConstantState().newDrawable();
+            btv.applyForcedMonochromeToDrawable(drawable);
             float xInset = (float) blurSizeOutline / (float) (width + blurSizeOutline);
             float yInset = (float) blurSizeOutline / (float) (height + blurSizeOutline);
             return new InsetDrawable(drawable, xInset / 2, yInset / 2, xInset / 2, yInset / 2);
         }
 
-        return new FastBitmapDrawable(
+        FastBitmapDrawable preview = new FastBitmapDrawable(
                 BitmapRenderer.createHardwareBitmap(width + blurSizeOutline,
                         height + blurSizeOutline, (c) -> drawDragView(c, scale)));
+        if (mView instanceof BubbleTextView btv) {
+            btv.applyForcedMonochromeToDrawable(preview);
+        }
+        return preview;
     }
 
     /**
