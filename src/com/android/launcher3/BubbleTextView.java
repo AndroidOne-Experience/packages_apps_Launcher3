@@ -585,6 +585,12 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
      * Only if actual text can be displayed in two line, the {@code true} value will be effective.
      */
     protected boolean shouldUseTwoLine() {
+        if (Utilities.isEnglishLanguage(getContext()) && (mDisplay == DISPLAY_ALL_APPS
+                || mDisplay == DISPLAY_PREDICTION_ROW
+                || mDisplay == DISPLAY_WORKSPACE)) {
+            return true;
+        }
+
         // For all apps and search UI, respect user selection in home settings. Note that all apps
         // cell spec can declare support for two line labels, but it's used primarily to decide
         // whether the BubbleTextView height needs to be increased to accommodate an extra line of
@@ -1002,7 +1008,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                     mAppTitleHorizontalPadding + mRoundRectPadding,
                     getPaddingBottom());
         }
-
+        // Only apply two line for supported displays (all apps, prediction row, workspace) and
+        // only if necessary.
         if (shouldUseTwoLine() && (mLastOriginalText != null)) {
             int allowedVerticalSpace = height - getPaddingTop() - getPaddingBottom()
                     - (mIcon != null ? mIconSize + getCompoundDrawablePadding() : 0);
