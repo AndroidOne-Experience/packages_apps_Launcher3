@@ -27,6 +27,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.android.launcher3.AbstractFloatingView;
+import com.android.launcher3.BubbleTextView;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
 import com.android.launcher3.R;
@@ -102,6 +103,9 @@ public class SecondaryDragController extends DragController<SecondaryDisplayLaun
                         initialDragViewScale,
                         dragViewScaleOnDrop,
                         scaleDps);
+        if (originalView instanceof BubbleTextView btv) {
+            dragView.setForceMonochrome(btv.shouldForceMonochromeForDrag());
+        }
         dragView.setItemInfo(dragInfo);
         mDragObject.dragComplete = false;
 
