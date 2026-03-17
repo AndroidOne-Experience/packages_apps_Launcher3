@@ -182,6 +182,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
 
         private Preference mShowGoogleAppPref;
         private Preference mHotseatSearchBarPref;
+        private Preference mHotseatSwapPref;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -311,8 +312,10 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
             switch (key) {
                 case KEY_DRAWER_OPEN_KEYBOARD:
                 case LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY:
+                case LauncherPrefs.HOTSEAT_QSB_SWAP_KEY:
                     InvariantDeviceProfile.INSTANCE.get(getContext())
                             .onConfigChanged(getActivity().getApplicationContext());
+                    updateHotseatSearchPrefsEnabled();
                     break;
                 default:
                     break;
@@ -345,7 +348,11 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                     return true;
                 case LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY:
                     mHotseatSearchBarPref = preference;
-                    preference.setEnabled(Utilities.isGSAEnabled(getContext()));
+                    updateHotseatSearchPrefsEnabled();
+                    return true;
+                case LauncherPrefs.HOTSEAT_QSB_SWAP_KEY:
+                    mHotseatSwapPref = preference;
+                    updateHotseatSearchPrefsEnabled();
                     return true;
                 case SMARTSPACE_ON_HOME_SCREEN_PREFERENCE_KEY:
                     return BuildConfig.QSB_ON_FIRST_SCREEN
@@ -396,9 +403,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
             if (mShowGoogleAppPref != null) {
                 mShowGoogleAppPref.setEnabled(Utilities.isGSAEnabled(getContext()));
             }
-            if (mHotseatSearchBarPref != null) {
-                mHotseatSearchBarPref.setEnabled(Utilities.isGSAEnabled(getContext()));
-            }
+            updateHotseatSearchPrefsEnabled();
 
             if (mRestartOnResume) {
                 recreateActivityNow();
@@ -428,6 +433,21 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 recreateActivityNow();
             } else {
                 mRestartOnResume = true;
+            }
+        }
+
+        private void updateHotseatSearchPrefsEnabled() {
+            if (getContext() == null) {
+                return;
+            }
+            boolean gsaEnabled = Utilities.isGSAEnabled(getContext());
+            if (mHotseatSearchBarPref != null) {
+                mHotseatSearchBarPref.setEnabled(gsaEnabled);
+            }
+            boolean searchBarEnabled = LauncherPrefs.get(getContext())
+                    .get(LauncherPrefs.HOTSEAT_SEARCH_BAR);
+            if (mHotseatSwapPref != null) {
+                mHotseatSwapPref.setEnabled(gsaEnabled && searchBarEnabled);
             }
         }
 

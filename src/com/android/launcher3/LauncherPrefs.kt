@@ -84,6 +84,7 @@ abstract class LauncherPrefs : SafeCloseable {
         const val SHOULD_SHOW_SMARTSPACE_KEY = "SHOULD_SHOW_SMARTSPACE_KEY"
         const val SMARTSPACE_ON_HOME_SCREEN_KEY = "pref_smartspace_home_screen"
         const val HOTSEAT_SEARCH_BAR_KEY = "pref_hotseat_search_bar"
+        const val HOTSEAT_QSB_SWAP_KEY = "pref_hotseat_qsb_swap"
         const val APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE_KEY =
             "apply_default_workspace_on_grid_change"
         @JvmField
@@ -126,6 +127,7 @@ abstract class LauncherPrefs : SafeCloseable {
             )
         @JvmField val SMARTSPACE_ON_HOME_SCREEN = backedUpItem(SMARTSPACE_ON_HOME_SCREEN_KEY, true)
         @JvmField val HOTSEAT_SEARCH_BAR = backedUpItem(HOTSEAT_SEARCH_BAR_KEY, true)
+        @JvmField val HOTSEAT_QSB_SWAP = backedUpItem(HOTSEAT_QSB_SWAP_KEY, false)
         @JvmField
         val APPLY_DEFAULT_WORKSPACE_ON_GRID_CHANGE =
             nonRestorableItem(
@@ -212,6 +214,10 @@ abstract class LauncherPrefs : SafeCloseable {
         @JvmStatic
         fun shouldShowHotseatSearchBar(context: Context): Boolean =
             get(context).get(HOTSEAT_SEARCH_BAR) && Utilities.isGSAEnabled(context)
+
+        @JvmStatic
+        fun shouldSwapHotseatQsbAndIcons(context: Context): Boolean =
+            shouldShowHotseatSearchBar(context) && get(context).get(HOTSEAT_QSB_SWAP)
 
         @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
         @JvmStatic

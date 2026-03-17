@@ -22,6 +22,8 @@
     <!-- Search bar -->
     <string name="search_bar_title">Search bar</string>
     <string name="search_bar_home_screen_summary">Show the Google search bar on the Home screen</string>
+    <string name="search_bar_swap_title">Swap search bar and dock</string>
+    <string name="search_bar_swap_summary">Swap the search bar and dock, placing the search bar at the top and moving app icons below</string>
 
     <!-- Hotseat searchbar -->
     <string name="hotseat_label_search">Search</string>
