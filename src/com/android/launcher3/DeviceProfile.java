@@ -146,6 +146,7 @@ public class DeviceProfile {
     public int hotseatQsbSpace;
     public int hotseatQsbWidth; // only used when isQsbInline
     private final boolean mIsHotseatQsbVisible;
+    private final boolean mSwapHotseatQsbAndIcons;
     public int hotseatBorderSpace;
     // Space required for the bubble bar between the hotseat and the edge of the screen. If there's
     // not enough space, the hotseat will adjust itself for the bubble bar.
@@ -239,6 +240,7 @@ public class DeviceProfile {
         mDropTargetProfile = new DropTargetProfile(0, 0, 0, 0, 0, 0, 0, 0, 0);
         hotseatQsbWidth = 0;
         mIsHotseatQsbVisible = false;
+        mSwapHotseatQsbAndIcons = false;
         hotseatBorderSpace = 0;
         mBubbleBarSpaceThresholdPx = 0;
         numShownAllAppsColumns = 0;
@@ -327,6 +329,7 @@ public class DeviceProfile {
         mIsHotseatQsbVisible = !isVerticalBarLayout()
                 && getHotseatProfile().getQsbHeight() > 0
                 && LauncherPrefs.shouldShowHotseatSearchBar(context);
+        mSwapHotseatQsbAndIcons = LauncherPrefs.shouldSwapHotseatQsbAndIcons(context);
         mHotseatColumnSpan = inv.numColumns;
 
         numShownAllAppsColumns = displayOptionSpec.numAllAppsColumns;
@@ -1266,25 +1269,29 @@ public class DeviceProfile {
             int sideSpacing =
                     (mDeviceProperties.getAvailableWidthPx() - (hotseatQsbWidth + iconExtraSpacePx))
                             / 2;
+            int topPadding = getHotseatBarTopPaddingForIcons();
+            int bottomPadding = getHotseatBarBottomPaddingForIcons();
             hotseatBarPadding.set(sideSpacing,
-                    0,
+                    topPadding,
                     sideSpacing,
-                    getHotseatBarBottomPadding());
+                    bottomPadding);
         } else {
             // We want the edges of the hotseat to line up with the edges of the workspace, but the
             // icons in the hotseat are a different size, and so don't line up perfectly. To account
             // for this, we pad the left and right of the hotseat with half of the difference of a
             // workspace cell vs a hotseat cell.
             int hotseatAdjustment = hotseatBorderSpace / 2;
+            int topPadding = getHotseatBarTopPaddingForIcons();
+            int bottomPadding = getHotseatBarBottomPaddingForIcons();
             hotseatBarPadding.set(
                     hotseatAdjustment + mWorkspaceProfile.getWorkspacePadding().left
                             + mWorkspaceProfile.getCellLayoutPaddingPx().left
                             + mInsets.left,
-                    0,
+                    topPadding,
                     hotseatAdjustment + mWorkspaceProfile.getWorkspacePadding().right
                             + mWorkspaceProfile.getCellLayoutPaddingPx().right
                             + mInsets.right,
-                    getHotseatBarBottomPadding());
+                    bottomPadding);
         }
         return hotseatBarPadding;
     }
@@ -1348,6 +1355,9 @@ public class DeviceProfile {
         } else if (isQsbInline) {
             return getHotseatBarBottomPadding()
                     - ((getHotseatProfile().getQsbHeight() - hotseatCellHeightPx) / 2);
+        } else if (shouldSwapHotseatQsbAndIcons()) {
+            return hotseatBarBottomSpacePx + hotseatCellHeightPx + hotseatQsbSpace
+                    - getHotseatProfile().getQsbShadowHeight();
         } else if (isTaskbarPresent) { // QSB on top
             return hotseatBarSizePx - getHotseatProfile().getQsbHeight()
                     + getHotseatProfile().getQsbShadowHeight();
@@ -1366,6 +1376,24 @@ public class DeviceProfile {
         } else {
             return hotseatBarSizePx - hotseatCellHeightPx;
         }
+    }
+
+    private boolean shouldSwapHotseatQsbAndIcons() {
+        return mSwapHotseatQsbAndIcons && hasHotseatQsb()
+                && !isTaskbarPresent && !isQsbInline;
+    }
+
+    private int getHotseatBarBottomPaddingForIcons() {
+        return shouldSwapHotseatQsbAndIcons() ? hotseatBarBottomSpacePx
+                : getHotseatBarBottomPadding();
+    }
+
+    private int getHotseatBarTopPaddingForIcons() {
+        if (!shouldSwapHotseatQsbAndIcons()) {
+            return 0;
+        }
+        int bottomPadding = getHotseatBarBottomPaddingForIcons();
+        return Math.max(0, hotseatBarSizePx - bottomPadding - hotseatCellHeightPx);
     }
 
     /**
