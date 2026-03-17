@@ -386,7 +386,7 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
 
         @JvmStatic
         fun shouldShowHotseatSearchBar(context: Context): Boolean =
-            get(context).get(HOTSEAT_SEARCH_BAR)
+            get(context).get(HOTSEAT_SEARCH_BAR) && Utilities.isGSAEnabled(context)
 
         @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
         @JvmStatic
