@@ -1,8 +1,10 @@
 package com.android.launcher3.qsb;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import com.android.launcher3.DeviceProfile;
+import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
@@ -27,6 +30,19 @@ public class QsbLayout extends FrameLayout implements
     ImageView mGoogleIcon;
     ImageView mLensIcon;
     Context mContext;
+    private boolean mGoogleQsbVisible;
+
+    private final BroadcastReceiver mPackageChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String pkg = intent.getData() != null ? intent.getData().getSchemeSpecificPart() : null;
+            if (Utilities.GSA_PACKAGE.equals(pkg)) {
+                InvariantDeviceProfile.INSTANCE.get(mContext)
+                        .onConfigChanged(mContext.getApplicationContext());
+                updateQsbMode(false /* force */);
+            }
+        }
+    };
 
     public QsbLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -48,25 +64,30 @@ public class QsbLayout extends FrameLayout implements
         setIcons();
 
         LauncherPrefs.getPrefs(mContext).registerOnSharedPreferenceChangeListener(this);
-
-        String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
-        setOnClickListener(view -> {
-            Intent intent = new Intent("android.search.action.GLOBAL_SEARCH")
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    .setPackage(searchPackage);
-
-            try {
-                mContext.startActivity(intent);
-            } catch (Exception e) {
-                android.widget.Toast.makeText(
-                        mContext,
-                        "Google search not available",
-                        android.widget.Toast.LENGTH_SHORT
-                ).show();
-            }
-        });
+        setupGoogleClickListener();
         setupGeminiIcon();
         enableLensIcon();
+        updateQsbMode(true /* force */);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
+        filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
+        filter.addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED);
+        filter.addDataScheme("package");
+        mContext.registerReceiver(mPackageChangeReceiver, filter);
+        updateQsbMode(true /* force */);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        mContext.unregisterReceiver(mPackageChangeReceiver);
+        super.onDetachedFromWindow();
     }
 
     @Override
@@ -92,6 +113,8 @@ public class QsbLayout extends FrameLayout implements
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (key.equals(Themes.KEY_THEMED_ICONS)) {
             setIcons();
+        } else if (key.equals(LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY)) {
+            updateQsbMode(false /* force */);
         }
     }
 
@@ -150,6 +173,40 @@ public class QsbLayout extends FrameLayout implements
                 android.widget.Toast.makeText(
                         mContext,
                         "Google Lens not available",
+                        android.widget.Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+    }
+
+    private boolean shouldShowGoogleQsb() {
+        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
+        return !dp.isVerticalBarLayout()
+                && LauncherPrefs.shouldShowHotseatSearchBar(mContext);
+    }
+
+    private void updateQsbMode(boolean force) {
+        boolean showQsb = shouldShowGoogleQsb();
+        if (!force && showQsb == mGoogleQsbVisible) {
+            return;
+        }
+        setVisibility(showQsb ? View.VISIBLE : View.GONE);
+        mGoogleQsbVisible = showQsb;
+    }
+
+    private void setupGoogleClickListener() {
+        String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
+        setOnClickListener(view -> {
+            Intent intent = new Intent("android.search.action.GLOBAL_SEARCH")
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    .setPackage(searchPackage);
+
+            try {
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                android.widget.Toast.makeText(
+                        mContext,
+                        "Google search not available",
                         android.widget.Toast.LENGTH_SHORT
                 ).show();
             }

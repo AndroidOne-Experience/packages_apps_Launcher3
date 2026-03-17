@@ -181,6 +181,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
         private boolean mPreferenceHighlighted = false;
 
         private Preference mShowGoogleAppPref;
+        private Preference mHotseatSearchBarPref;
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -342,6 +343,10 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                     mShowGoogleAppPref = preference;
                     preference.setEnabled(Utilities.isGSAEnabled(getContext()));
                     return true;
+                case LauncherPrefs.HOTSEAT_SEARCH_BAR_KEY:
+                    mHotseatSearchBarPref = preference;
+                    preference.setEnabled(Utilities.isGSAEnabled(getContext()));
+                    return true;
                 case SMARTSPACE_ON_HOME_SCREEN_PREFERENCE_KEY:
                     return BuildConfig.QSB_ON_FIRST_SCREEN
                             && !Utilities.SHOULD_SHOW_FIRST_PAGE_WIDGET;
@@ -390,6 +395,9 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
 
             if (mShowGoogleAppPref != null) {
                 mShowGoogleAppPref.setEnabled(Utilities.isGSAEnabled(getContext()));
+            }
+            if (mHotseatSearchBarPref != null) {
+                mHotseatSearchBarPref.setEnabled(Utilities.isGSAEnabled(getContext()));
             }
 
             if (mRestartOnResume) {
