@@ -377,7 +377,7 @@
     <dimen name="floating_rotation_button_taskbar_bottom_margin">10dp</dimen>
 
     <!-- Copied from frameworks/base/packages/SystemUI -->
-    <dimen name="navigation_home_handle_width">108dp</dimen>
+    <dimen name="navigation_home_handle_width">72dp</dimen>
 
     <!-- Taskbar -->
     <dimen name="taskbar_size">@*android:dimen/taskbar_frame_height</dimen>
@@ -399,9 +399,9 @@
     <dimen name="taskbar_contextual_buttons_size">35dp</dimen>
     <dimen name="taskbar_stashed_size">@*android:dimen/taskbar_stashed_size</dimen>
     <dimen name="taskbar_stashed_handle_width">220dp</dimen>
-    <dimen name="taskbar_stashed_small_screen">108dp</dimen>
+    <dimen name="taskbar_stashed_small_screen">72dp</dimen>
     <dimen name="taskbar_unstash_input_area">316dp</dimen>
-    <dimen name="taskbar_stashed_handle_height">4dp</dimen>
+    <dimen name="taskbar_stashed_handle_height">2dp</dimen>
     <dimen name="taskbar_nudge_pill_height">24dp</dimen>
     <dimen name="taskbar_nudge_pill_width">108dp</dimen>
     <dimen name="taskbar_nudge_glow_radius_percent">200%</dimen>
