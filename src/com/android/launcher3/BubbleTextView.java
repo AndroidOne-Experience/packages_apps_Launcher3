@@ -344,15 +344,22 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
                     .getIconState().getIconShapeInfo();
         }
 
-        setEllipsize(TruncateAt.END);
+        setSingleLine(true);
+        setMaxLines(1);
+        setEllipsize(TruncateAt.MARQUEE);
+        setMarqueeRepeatLimit(-1);
+        setHorizontallyScrolling(true);
+        setSelected(true);
         setAccessibilityDelegate(mActivity.getAccessibilityDelegate());
         setTextAlpha(1f);
     }
 
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        // Disable marques when not focused to that, so that updating text does not cause relayout.
-        setEllipsize(focused ? TruncateAt.MARQUEE : TruncateAt.END);
+        setSingleLine(true);
+        setMaxLines(1);
+        setEllipsize(TruncateAt.MARQUEE);
+        setSelected(true);
         super.onFocusChanged(focused, direction, previouslyFocusedRect);
     }
 
@@ -388,7 +395,12 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         setAlpha(1);
         setScaleY(1);
         setTranslationY(0);
+        setSingleLine(true);
         setMaxLines(1);
+        setEllipsize(TruncateAt.MARQUEE);
+        setMarqueeRepeatLimit(-1);
+        setHorizontallyScrolling(true);
+        setSelected(true);
         setVisibility(VISIBLE);
     }
 
@@ -661,22 +673,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
      * Only if actual text can be displayed in two line, the {@code true} value will be effective.
      */
     protected boolean shouldUseTwoLine() {
-        if (Utilities.isEnglishLanguage(getContext()) && (mDisplay == DISPLAY_ALL_APPS
-                || mDisplay == DISPLAY_PREDICTION_ROW
-                || mDisplay == DISPLAY_WORKSPACE)) {
-            return true;
-        }
-
-        // For all apps and search UI, respect user selection in home settings. Note that all apps
-        // cell spec can declare support for two line labels, but it's used primarily to decide
-        // whether the BubbleTextView height needs to be increased to accommodate an extra line of
-        // text.
-        if (mDisplay == DISPLAY_ALL_APPS || mDisplay == DISPLAY_PREDICTION_ROW) {
-            return mDeviceProfile.inv.enableTwoLinesInAllApps;
-        }
-
-        // Otherwise, show two lines if the cell declares it can fit two line label.
-        return getCellSpecMaxTextLineCount() == 2;
+        return false;
     }
 
     /**
@@ -728,6 +725,12 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             } else {
                 setText(label);
             }
+            setSingleLine(true);
+            setMaxLines(1);
+            setEllipsize(TruncateAt.MARQUEE);
+            setMarqueeRepeatLimit(-1);
+            setHorizontallyScrolling(true);
+            setSelected(true);
         }
         if (contentDescription != null) {
             setContentDescription(isItemDisabled
