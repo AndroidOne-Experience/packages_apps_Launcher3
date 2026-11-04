@@ -920,11 +920,12 @@ public class DeviceProfile {
     }
 
     private void updateAllAppsWithResponsiveMeasures() {
-        // This workaround is needed to align AllApps icons with Workspace icons
-        // since AllApps doesn't have borders between cells
         int halfBorder = getAllAppsProfile().getBorderSpacePx().x / 2;
-        allAppsPadding.left = mResponsiveAllAppsWidthSpec.getStartPaddingPx() - halfBorder;
-        allAppsPadding.right = mResponsiveAllAppsWidthSpec.getEndPaddingPx() - halfBorder;
+        int workspaceSidePadding = mWorkspaceProfile.getWorkspacePadding().left
+                + mWorkspaceProfile.getCellLayoutPaddingPx().left;
+        allAppsPadding.left = max(0, workspaceSidePadding - halfBorder);
+        allAppsPadding.right = max(0, workspaceSidePadding - halfBorder);
+        allAppsLeftRightMargin = 0;
     }
 
 
@@ -938,11 +939,12 @@ public class DeviceProfile {
                     + allAppsPadding.left + allAppsPadding.right;
             allAppsLeftRightMargin = max(1,
                     (mDeviceProperties.getAvailableWidthPx() - usedWidth) / 2);
-        } else if (!mIsResponsiveGrid) {
-            allAppsPadding.left = allAppsPadding.right =
-                    max(0, getWorkspaceIconProfile().getDesiredWorkspaceHorizontalMarginPx()
-                            + cellLayoutHorizontalPadding
-                            - (getAllAppsProfile().getBorderSpacePx().x / 2));
+        } else {
+            int halfBorder = getAllAppsProfile().getBorderSpacePx().x / 2;
+            int workspaceSidePadding = mWorkspaceProfile.getWorkspacePadding().left
+                    + cellLayoutHorizontalPadding;
+            allAppsPadding.left = allAppsPadding.right = max(0, workspaceSidePadding - halfBorder);
+            allAppsLeftRightMargin = 0;
         }
     }
 
