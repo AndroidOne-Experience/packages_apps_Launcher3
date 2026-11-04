@@ -95,7 +95,11 @@ public class PreferenceHighlighter extends ItemDecoration implements Runnable {
 
         if (!mHighLightStarted) {
             // Start highlight
-            int colorTo = setColorAlphaBound(Themes.getColorAccent(mRv.getContext()), 66);
+            int accentColor = Themes.getColorAccent(mRv.getContext());
+            if (accentColor == Color.MAGENTA || (accentColor & 0x00FFFFFF) == 0x00FF00FF) {
+                accentColor = mRv.getContext().getColor(com.android.launcher3.R.color.materialColorPrimary);
+            }
+            int colorTo = setColorAlphaBound(accentColor, 66);
             ObjectAnimator anim = ObjectAnimator.ofArgb(this, HIGHLIGHT_COLOR, END_COLOR,
                     colorTo);
             anim.setDuration(HIGHLIGHT_FADE_IN_DURATION);

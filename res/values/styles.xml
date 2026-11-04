@@ -228,6 +228,10 @@
 
     <style name="HomeSettings.Theme" parent="@style/Theme.SubSettingsBase">
         <item name="preferenceTheme">@style/HomeSettings.PreferenceTheme</item>
+        <item name="colorAccent">@color/materialColorPrimary</item>
+        <item name="android:colorAccent">@color/materialColorPrimary</item>
+        <item name="colorControlHighlight">@color/materialColorControlHighlight</item>
+        <item name="android:colorControlHighlight">@color/materialColorControlHighlight</item>
     </style>
 
     <style name="HomeSettings.PreferenceTheme" parent="@style/PreferenceTheme.SettingsLib">
