@@ -1751,7 +1751,6 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
-<<<<<<< HEAD
     public void returnToHomescreen() {
         getStateManager().goToState(LauncherState.NORMAL);
     }
