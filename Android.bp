@@ -420,10 +420,6 @@ java_import {
 // Library with all the dependencies for building Launcher3
 android_library {
     name: "Launcher3ResLib",
-    defaults: [
-        "launcher_compose_defaults",
-        "SettingsLibDefaults",
-    ],
     srcs: [],
     resource_dirs: ["res"],
     static_libs: [
