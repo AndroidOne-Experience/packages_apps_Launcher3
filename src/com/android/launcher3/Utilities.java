@@ -159,6 +159,8 @@ public final class Utilities {
     public static final int TRANSLATE_LEFT = 2;
     public static final int TRANSLATE_RIGHT = 3;
 
+    public static final boolean SHOULD_SHOW_FIRST_PAGE_WIDGET = false;
+
     @IntDef({TRANSLATE_UP, TRANSLATE_DOWN, TRANSLATE_LEFT, TRANSLATE_RIGHT})
     public @interface AdjustmentDirection{}
 
