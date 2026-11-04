@@ -326,12 +326,6 @@ public class DeviceProfile {
                 .createDropTargetProfile(res, shouldApplyWidePortraitDimens);
 
         numShownHotseatIcons = displayOptionSpec.numShownHotseatIcons;
-        mIsHotseatQsbVisible = !isVerticalBarLayout()
-                && getHotseatProfile().getQsbHeight() > 0
-                && LauncherPrefs.shouldShowHotseatSearchBar(context);
-        mSwapHotseatQsbAndIcons = LauncherPrefs.shouldSwapHotseatQsbAndIcons(context);
-        mHotseatColumnSpan = inv.numColumns;
-
         numShownAllAppsColumns = displayOptionSpec.numAllAppsColumns;
 
         int hotseatBarBottomSpace;
@@ -375,6 +369,12 @@ public class DeviceProfile {
                 //  necessary.
                 res.getDimensionPixelSize(R.dimen.workspace_page_indicator_height)
         );
+
+        mIsHotseatQsbVisible = !isVerticalBarLayout()
+                && getHotseatProfile().getQsbHeight() > 0
+                && LauncherPrefs.shouldShowHotseatSearchBar(context);
+        mSwapHotseatQsbAndIcons = LauncherPrefs.shouldSwapHotseatQsbAndIcons(context);
+        mHotseatColumnSpan = inv.numColumns;
 
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
         isQsbInline = isQsbInline(
