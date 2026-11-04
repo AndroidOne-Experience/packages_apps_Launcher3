@@ -280,7 +280,6 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @JvmField
         val DB_FILE = backedUpItem(DeviceGridState.KEY_DB_FILE, "", EncryptionType.ENCRYPTED)
         @JvmField
-        @JvmField
         val GRID_TYPE =
             backedUpItem(DeviceGridState.KEY_GRID_TYPE, GRID_TYPE_ANY, EncryptionType.ENCRYPTED)
         @JvmField
