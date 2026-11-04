@@ -1050,8 +1050,8 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         if (mContext.isPhoneButtonNavMode()) {
             ViewGroup.LayoutParams navButtonParams =
                     (ViewGroup.LayoutParams) buttonView.getLayoutParams();
-            navButtonParams.width = MATCH_PARENT;
-            navButtonParams.height = MATCH_PARENT;
+            navButtonParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            navButtonParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
         }
         parent.addView(buttonView);
         mAllButtons.add(buttonView);

@@ -336,8 +336,7 @@ public class ModelDbController {
     private void resetTargetGridDbToDefaultWorkspace() throws Exception {
         String targetDbName = new DeviceGridState(mIdp).getDbFile();
         DatabaseHelper oldHelper = mOpenHelper;
-        mOpenHelper = (mContext instanceof SandboxContext) ? oldHelper
-                : createDatabaseHelper(true /* forMigration */, targetDbName);
+        mOpenHelper = createDatabaseHelper(true /* forMigration */, targetDbName);
         try {
             FileLog.d(TAG, "Resetting launcher database to default workspace for "
                     + targetDbName);

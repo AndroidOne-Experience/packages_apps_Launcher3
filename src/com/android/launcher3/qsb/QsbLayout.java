@@ -95,9 +95,6 @@ public class QsbLayout extends FrameLayout implements
         int requestedWidth = MeasureSpec.getSize(widthMeasureSpec);
         int height = MeasureSpec.getSize(heightMeasureSpec);
 
-        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
-        int cellWidth = DeviceProfile.calculateCellWidth(requestedWidth, dp.cellLayoutBorderSpacePx.x, dp.numShownHotseatIcons);
-        int iconSize = (int)(Math.round((dp.iconSizePx * 0.92f)));
         int width = requestedWidth;
         setMeasuredDimension(width, height);
 

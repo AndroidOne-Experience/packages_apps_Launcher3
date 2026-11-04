@@ -16,9 +16,9 @@
 
 package com.android.launcher3.dagger
 
+import com.android.launcher3.CustomLauncherModelDelegate
 import com.android.launcher3.MainProcessInitializer
 import com.android.launcher3.model.ModelDelegate
-import com.android.launcher3.model.QuickstepModelDelegate
 import com.android.launcher3.testing.TestInformationHandler
 import com.android.quickstep.QuickstepProcessInitializer
 import com.android.quickstep.QuickstepTestInformationHandler
@@ -32,7 +32,7 @@ import dagger.Module
 @Module
 abstract class AppModule {
 
-    @Binds abstract fun bindModelDelegate(impl: QuickstepModelDelegate): ModelDelegate
+    @Binds abstract fun bindModelDelegate(impl: CustomLauncherModelDelegate): ModelDelegate
 
     @Binds
     abstract fun bindMainProcessInitializer(

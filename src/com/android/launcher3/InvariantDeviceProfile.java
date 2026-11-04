@@ -584,7 +584,7 @@ public class InvariantDeviceProfile {
     }
 
     /** Updates IDP using the provided context. Notifies listeners of change. */
-    private void onConfigChanged() {
+    public void onConfigChanged() {
         Object[] oldState = toModelState();
 
         // Re-init grid
@@ -597,6 +597,10 @@ public class InvariantDeviceProfile {
 
         // Generate new Icon Shape info
         mThemeManager.generateIconShape(iconBitmapSize);
+    }
+
+    public void onConfigChanged(Context context) {
+        onConfigChanged();
     }
 
     private static boolean firstGridFilter(GridOption gridOption, int deviceType,

@@ -693,9 +693,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         // Ensure that the first page is always present
         bindAndInitFirstWorkspaceScreen();
 
-        // Remove any deferred refresh callbacks
-        mLauncher.mHandler.removeCallbacksAndMessages(DeferredWidgetRefresh.class);
-
         // Re-enable the layout transitions
         enableLayoutTransitions();
     }

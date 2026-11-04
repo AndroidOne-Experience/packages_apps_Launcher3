@@ -41,6 +41,15 @@ import com.android.launcher3.views.ActivityContext;
 @SuppressWarnings("NewApi")
 public class Themes {
 
+    public static final String KEY_THEMED_ICONS = "themed_icons";
+
+    /**
+     * Returns true if themed icons are enabled.
+     */
+    public static boolean isThemedIconEnabled(Context context) {
+        return com.android.launcher3.graphics.ThemeManager.INSTANCE.get(context).isIconThemeEnabled();
+    }
+
     /** Gets the WallpaperColorHints and then uses those to get the correct activity theme res. */
     public static int getActivityThemeRes(Context context) {
         return getActivityThemeRes(context, WallpaperColorHints.get(context).getHints());

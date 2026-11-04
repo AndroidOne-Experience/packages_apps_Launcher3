@@ -11,13 +11,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.android.launcher3.LauncherAppState;
+import androidx.annotation.Nullable;
+
+import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.R;
+import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.model.AllAppsList;
 import com.android.launcher3.model.BgDataModel;
 import com.android.launcher3.model.ModelTaskController;
+import com.android.launcher3.model.PredictedItemFactory;
 import com.android.launcher3.model.QuickstepModelDelegate;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.pm.UserCache;
 import com.android.launcher3.util.Executors;
 
 import java.io.FileDescriptor;
@@ -32,6 +37,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public class CustomLauncherModelDelegate extends QuickstepModelDelegate
     implements SmartspaceSession.OnTargetsAvailableListener {
 
@@ -45,8 +53,13 @@ public class CustomLauncherModelDelegate extends QuickstepModelDelegate
     private static final String GSA_PACKAGE = "com.google.android.googlequicksearchbox";
     private static final String GSA_WEATHER_ACTIVITY = "com.google.android.apps.search.weather.WeatherExportedActivity";
  
-    public CustomLauncherModelDelegate(Context context) {
-        super(context);
+    @Inject
+    public CustomLauncherModelDelegate(@ApplicationContext Context context,
+            InvariantDeviceProfile idp,
+            UserCache userCache,
+            PredictedItemFactory.Factory itemParserFactory,
+            @Nullable @Named("ICONS_DB") String dbFileName) {
+        super(context, idp, userCache, itemParserFactory, dbFileName);
         mContext = context;
     }
 
@@ -56,7 +69,6 @@ public class CustomLauncherModelDelegate extends QuickstepModelDelegate
         destroySmartspaceSession();
     }
 
-    @Override
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
         writer.println(prefix + "Recent BC Smartspace Targets (most recent first)");
         if (mSmartspaceTargets.size() == 0) {
@@ -125,26 +137,30 @@ public class CustomLauncherModelDelegate extends QuickstepModelDelegate
         if (mSmartspaceTargets.size() > 5) {
             mSmartspaceTargets.pollFirst();
         }
-        mApp.getModel().enqueueModelUpdateTask((taskController, dataModel, apps) -> {
-            List<ItemInfo> items = new ArrayList<>(mSmartspaceTargets.size());
-            for (SmartspaceTarget target : list) {
-                SmartspaceItem item = new SmartspaceItem();
-                item.setSmartspaceTarget(target);
-                item.container = -110;
-                item.itemType = 8;
-                items.add(item);
-            }
-            BgDataModel.FixedContainerItems container = new BgDataModel.FixedContainerItems(-110, items);
-            taskController.bindExtraContainerItems(container);
-        });
+        if (mModel != null) {
+            mModel.enqueueModelUpdateTask((taskController, dataModel, apps) -> {
+                List<ItemInfo> items = new ArrayList<>(mSmartspaceTargets.size());
+                for (SmartspaceTarget target : list) {
+                    SmartspaceItem item = new SmartspaceItem();
+                    item.setSmartspaceTarget(target);
+                    item.container = -110;
+                    item.itemType = 8;
+                    items.add(item);
+                }
+                BgDataModel.FixedContainerItems container = new BgDataModel.FixedContainerItems(-110, items);
+                taskController.bindExtraContainerItems(container);
+            });
+        }
     }
 
     public void notifySmartspaceEvent(SmartspaceTargetEvent event) {
-        mApp.getModel().enqueueModelUpdateTask((taskController, dataModel, apps) -> {
-            if (mSmartspaceSession != null) {
-                mSmartspaceSession.notifySmartspaceEvent(event);
-            }
-        });
+        if (mModel != null) {
+            mModel.enqueueModelUpdateTask((taskController, dataModel, apps) -> {
+                if (mSmartspaceSession != null) {
+                    mSmartspaceSession.notifySmartspaceEvent(event);
+                }
+            });
+        }
     }
 
     @Override

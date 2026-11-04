@@ -52,7 +52,17 @@ public class SmartspaceViewContainer extends FrameLayout implements
         CustomLauncherModelDelegate delegate =
                 (CustomLauncherModelDelegate) mLauncher.getModel().getModelDelegate();
         BcSmartspaceDataProvider plugin = mLauncher.getSmartspacePlugin();
-        plugin.registerSmartspaceEventNotifier(event -> delegate.notifySmartspaceEvent(event));
+        plugin.registerSmartspaceEventNotifier(new BcSmartspaceDataPlugin.SmartspaceEventNotifier() {
+            @Override
+            public void notifySmartspaceEvent(SmartspaceTargetEvent event) {
+                delegate.notifySmartspaceEvent(event);
+            }
+
+            @Override
+            public BcSmartspaceDataPlugin.IntentStarter getIntentStarter() {
+                return null;
+            }
+        });
         mView.registerDataProvider(plugin);
     }
 
@@ -73,7 +83,7 @@ public class SmartspaceViewContainer extends FrameLayout implements
         int defaultWorkspaceMargin =
                 getResources().getDimensionPixelSize(R.dimen.dynamic_grid_left_right_margin);
         int extraWorkspaceStartInset =
-                Math.max(0, deviceProfile.desiredWorkspaceHorizontalMarginPx
+                Math.max(0, deviceProfile.getWorkspaceIconProfile().getDesiredWorkspaceHorizontalMarginPx()
                         - defaultWorkspaceMargin);
         marginStart = Math.max(0, marginStart - extraWorkspaceStartInset);
 

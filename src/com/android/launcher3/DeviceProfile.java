@@ -1245,7 +1245,7 @@ public class DeviceProfile {
                 endSpacing = mDeviceProperties.getAvailableWidthPx() - hotseatWidth - startSpacing
                         + hotseatBorderSpace;
             } else {
-                startSpacing = isTablet
+                startSpacing = mDeviceProperties.isTablet()
                         ? (mDeviceProperties.getAvailableWidthPx() - hotseatWidth) / 2
                         : (mDeviceProperties.getAvailableWidthPx() - (hasHotseatQsb() ? hotseatQsbWidth : hotseatWidth)) / 2;
                 endSpacing = startSpacing;
@@ -1332,7 +1332,7 @@ public class DeviceProfile {
     }
 
     private int getAdditionalQsbSpace() {
-        return isTablet && isHotseatQsbInline() ? hotseatQsbWidth + hotseatBorderSpace : 0;
+        return mDeviceProperties.isTablet() && isHotseatQsbInline() ? hotseatQsbWidth + hotseatBorderSpace : 0;
     }
 
     /**
