@@ -2977,7 +2977,6 @@ public class Launcher extends StatefulActivity<LauncherState>
         }
         return Stream.of(APP_INFO, WIDGETS, INSTALL, UNINSTALL_APP);
     }
-    }
 
     /**
      * @see LauncherState#getOverviewScaleAndOffset(Launcher)
