@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 The Android Open Source Project -->
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory>
+
+        <com.android.launcher3.settings.AtAGlanceHeaderPreference
+            android:key="pref_at_a_glance_header"
+            android:selectable="false" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_home_screen"
+            android:title="@string/use_at_a_glance_title"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="category_customise"
+        android:title="@string/at_a_glance_category_customise"
+        android:dependency="pref_smartspace_home_screen"
+        app:dependency="pref_smartspace_home_screen">
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_weather"
+            android:title="@string/smartspace_feature_weather_title"
+            android:summary="@string/smartspace_feature_weather_summary"
+            android:icon="@drawable/ic_smartspace_weather"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_sports"
+            android:title="@string/smartspace_feature_sports_title"
+            android:summary="@string/smartspace_feature_sports_summary"
+            android:icon="@drawable/ic_smartspace_sports"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_finance"
+            android:title="@string/smartspace_feature_finance_title"
+            android:summary="@string/smartspace_feature_finance_summary"
+            android:icon="@drawable/ic_smartspace_finance"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_air_quality"
+            android:title="@string/smartspace_feature_air_quality_title"
+            android:summary="@string/smartspace_feature_air_quality_summary"
+            android:icon="@drawable/ic_smartspace_air_quality"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_alerts"
+            android:title="@string/smartspace_feature_alerts_title"
+            android:summary="@string/smartspace_feature_alerts_summary"
+            android:icon="@drawable/ic_smartspace_alerts"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_earthquake"
+            android:title="@string/smartspace_feature_earthquake_title"
+            android:summary="@string/smartspace_feature_earthquake_summary"
+            android:icon="@drawable/ic_smartspace_earthquake"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_upcoming"
+            android:title="@string/smartspace_feature_upcoming_title"
+            android:summary="@string/smartspace_feature_upcoming_summary"
+            android:icon="@drawable/ic_smartspace_upcoming"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_work_profile"
+            android:title="@string/smartspace_feature_work_profile_title"
+            android:summary="@string/smartspace_feature_work_profile_summary"
+            android:icon="@drawable/ic_smartspace_work_profile"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_food_orders"
+            android:title="@string/smartspace_feature_food_orders_title"
+            android:summary="@string/smartspace_feature_food_orders_summary"
+            android:icon="@drawable/ic_smartspace_food_orders"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_parcel_delivery"
+            android:title="@string/smartspace_feature_parcel_delivery_title"
+            android:summary="@string/smartspace_feature_parcel_delivery_summary"
+            android:icon="@drawable/ic_smartspace_parcel_delivery"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_commute"
+            android:title="@string/smartspace_feature_commute_title"
+            android:summary="@string/smartspace_feature_commute_summary"
+            android:icon="@drawable/ic_smartspace_commute"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_time_to_leave"
+            android:title="@string/smartspace_feature_time_to_leave_title"
+            android:summary="@string/smartspace_feature_time_to_leave_summary"
+            android:icon="@drawable/ic_smartspace_time_to_leave"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_ridesharing"
+            android:title="@string/smartspace_feature_ridesharing_title"
+            android:summary="@string/smartspace_feature_ridesharing_summary"
+            android:icon="@drawable/ic_smartspace_ridesharing"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_travel"
+            android:title="@string/smartspace_feature_travel_title"
+            android:summary="@string/smartspace_feature_travel_summary"
+            android:icon="@drawable/ic_smartspace_travel"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_bedtime"
+            android:title="@string/smartspace_feature_bedtime_title"
+            android:summary="@string/smartspace_feature_bedtime_summary"
+            android:icon="@drawable/ic_smartspace_bedtime"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_fitness"
+            android:title="@string/smartspace_feature_fitness_title"
+            android:summary="@string/smartspace_feature_fitness_summary"
+            android:icon="@drawable/ic_smartspace_fitness"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_safety_check"
+            android:title="@string/smartspace_feature_safety_check_title"
+            android:summary="@string/smartspace_feature_safety_check_summary"
+            android:icon="@drawable/ic_smartspace_safety_check"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_timer_stopwatch"
+            android:title="@string/smartspace_feature_timer_stopwatch_title"
+            android:summary="@string/smartspace_feature_timer_stopwatch_summary"
+            android:icon="@drawable/ic_smartspace_timer_stopwatch"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_connected_devices"
+            android:title="@string/smartspace_feature_connected_devices_title"
+            android:summary="@string/smartspace_feature_connected_devices_summary"
+            android:icon="@drawable/ic_smartspace_connected_devices"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_cross_device_timer"
+            android:title="@string/smartspace_feature_cross_device_timer_title"
+            android:summary="@string/smartspace_feature_cross_device_timer_summary"
+            android:icon="@drawable/ic_smartspace_cross_device_timer"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_doorbell"
+            android:title="@string/smartspace_feature_doorbell_title"
+            android:summary="@string/smartspace_feature_doorbell_summary"
+            android:icon="@drawable/ic_smartspace_doorbell"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_torch"
+            android:title="@string/smartspace_feature_torch_title"
+            android:summary="@string/smartspace_feature_torch_summary"
+            android:icon="@drawable/ic_smartspace_torch"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_loud_sound"
+            android:title="@string/smartspace_feature_loud_sound_title"
+            android:summary="@string/smartspace_feature_loud_sound_summary"
+            android:icon="@drawable/ic_smartspace_loud_sound"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_smartspace_passes_nearby"
+            android:title="@string/smartspace_feature_passes_nearby_title"
+            android:summary="@string/smartspace_feature_passes_nearby_summary"
+            android:icon="@drawable/ic_smartspace_passes_nearby"
+            android:defaultValue="true"
+            android:persistent="true" />
+
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

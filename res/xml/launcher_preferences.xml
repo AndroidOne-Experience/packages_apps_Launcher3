@@ -46,12 +46,11 @@
         android:summary="@string/google_feed_summary"
         android:defaultValue="true" />
 
-    <SwitchPreferenceCompat
+    <com.android.launcher3.settings.AtAGlancePreference
         android:key="pref_smartspace_home_screen"
         android:title="@string/at_a_glance_title"
-        android:summary="@string/at_a_glance_home_screen_summary"
-        android:defaultValue="true"
-        android:persistent="true" />
+        android:persistent="true"
+        android:widgetLayout="@layout/preference_widget_gear" />
 
     <SwitchPreferenceCompat
         android:key="pref_hotseat_search_bar"

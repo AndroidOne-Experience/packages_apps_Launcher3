@@ -83,6 +83,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     private static final String SMARTSPACE_ON_HOME_SCREEN_PREFERENCE_KEY =
             "pref_smartspace_home_screen";
 
+    public static final String EXTRA_FRAGMENT = ":settings:show_fragment";
     public static final String EXTRA_FRAGMENT_ARGS = ":settings:fragment_args";
 
     // Intent extra to indicate the pref-key to highlighted when opening the settings activity
@@ -117,12 +118,24 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 args.putString(EXTRA_FRAGMENT_ROOT_KEY, root);
             }
 
+            String fragmentName = intent.getStringExtra(EXTRA_FRAGMENT);
+            if (fragmentName == null && args != null) {
+                fragmentName = args.getString(EXTRA_FRAGMENT);
+            }
+            if (fragmentName == null) {
+                fragmentName = getString(R.string.settings_fragment_name);
+            }
+
             final FragmentManager fm = getSupportFragmentManager();
-            final Fragment f = fm.getFragmentFactory().instantiate(getClassLoader(),
-                    getString(R.string.settings_fragment_name));
+            final Fragment f = fm.getFragmentFactory().instantiate(getClassLoader(), fragmentName);
             f.setArguments(args);
             // Display the fragment as the main content.
             fm.beginTransaction().replace(com.android.settingslib.collapsingtoolbar.R.id.content_frame, f).commit();
+
+            if (getActionBar() != null
+                    && !TextUtils.equals(fragmentName, getString(R.string.settings_fragment_name))) {
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
@@ -139,6 +152,7 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
             ((DialogFragment) f).show(fm, key);
         } else {
             startActivity(new Intent(this, SettingsActivity.class)
+                    .putExtra(EXTRA_FRAGMENT, fragment)
                     .putExtra(EXTRA_FRAGMENT_ARGS, args));
         }
         return true;

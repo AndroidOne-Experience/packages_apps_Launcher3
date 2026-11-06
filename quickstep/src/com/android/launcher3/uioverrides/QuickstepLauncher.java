@@ -859,6 +859,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSmartspacePlugin.setContext(this);
         if (savedInstanceState != null) {
             mPendingSplitSelectInfo = ObjectWrapper.unwrap(
                     savedInstanceState.getIBinder(PENDING_SPLIT_SELECT_INFO));

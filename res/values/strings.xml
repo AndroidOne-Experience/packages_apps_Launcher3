@@ -579,4 +579,9 @@
     <string name="seven_sided_cookie_shape_title">7-sided cookie</string>
     <!-- label for arch shape option in customization picker -->
     <string name="arch_shape_title">Arch</string>
+
+    <!-- Smartspace long-press popup options -->
+    <string name="smartspace_dismiss">Dismiss</string>
+    <string name="smartspace_settings">Settings</string>
+    <string name="smartspace_about">About this content</string>
 </resources>

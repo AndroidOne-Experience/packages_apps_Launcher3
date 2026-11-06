@@ -19,6 +19,106 @@
     <string name="at_a_glance_title">At a Glance</string>
     <string name="at_a_glance_home_screen_summary">Show At a Glance on the Home screen</string>
 
+    <!-- At a Glance Dialog & Preferences -->
+    <string name="use_at_a_glance_title">Use At a Glance</string>
+    <string name="at_a_glance_info_description">At a Glance shows you what you need, right when you need it, on your home screen and lock screen, using info from your phone and your activity in Google products.</string>
+    <string name="at_a_glance_info_learn_more">Learn more about how At a Glance personalises your content.</string>
+    <string name="at_a_glance_learn_more_url" translatable="false">https://support.google.com/pixelphone/answer/14884067</string>
+    <string name="at_a_glance_dialog_title">Turn off At a Glance</string>
+    <string name="at_a_glance_dialog_message">Weather and information about upcoming events will stop showing on your home screen and lock screen.</string>
+    <string name="at_a_glance_customise">Customise</string>
+    <string name="at_a_glance_turn_off">Turn off</string>
+    <string name="at_a_glance_turn_on">Turn on</string>
+    <string name="at_a_glance_summary_on">On</string>
+    <string name="at_a_glance_summary_off">Off</string>
+    <string name="at_a_glance_category_customise">Customise</string>
+
+    <!-- At a Glance Features -->
+    <string name="smartspace_feature_weather_title">Weather</string>
+    <string name="smartspace_feature_weather_summary">Weather information</string>
+
+    <string name="smartspace_feature_sports_title">Sports</string>
+    <string name="smartspace_feature_sports_summary">Show sports updates from Google. These updates may affect battery life. Choose your teams</string>
+
+    <string name="smartspace_feature_finance_title">Finance</string>
+    <string name="smartspace_feature_finance_summary">Show Finance updates from Google. Choose your stocks</string>
+
+    <string name="smartspace_feature_air_quality_title">Air quality</string>
+    <string name="smartspace_feature_air_quality_summary">Air quality alerts</string>
+
+    <string name="smartspace_feature_alerts_title">Alerts</string>
+    <string name="smartspace_feature_alerts_summary">Severe weather alerts</string>
+
+    <string name="smartspace_feature_earthquake_title">Earthquake alert</string>
+    <string name="smartspace_feature_earthquake_summary">Alert when an earthquake larger than magnitude 4.5 is detected nearby</string>
+
+    <string name="smartspace_feature_upcoming_title">Upcoming</string>
+    <string name="smartspace_feature_upcoming_summary">Calendar, events, hotel reservations and reminders</string>
+
+    <string name="smartspace_feature_work_profile_title">Work profile</string>
+    <string name="smartspace_feature_work_profile_summary">Calendar, events and reminders from work profile</string>
+
+    <string name="smartspace_feature_food_orders_title">Food and household orders</string>
+    <string name="smartspace_feature_food_orders_summary">Delivery and pick-up status</string>
+
+    <string name="smartspace_feature_parcel_delivery_title">Parcel delivery</string>
+    <string name="smartspace_feature_parcel_delivery_summary">Show when a parcel is delivered or collected</string>
+
+    <string name="smartspace_feature_commute_title">Commute</string>
+    <string name="smartspace_feature_commute_summary">Traffic info and travel time</string>
+
+    <string name="smartspace_feature_time_to_leave_title">Time to leave</string>
+    <string name="smartspace_feature_time_to_leave_summary">Recommended departure time for upcoming events</string>
+
+    <string name="smartspace_feature_ridesharing_title">Ridesharing</string>
+    <string name="smartspace_feature_ridesharing_summary">Show the status of your trip</string>
+
+    <string name="smartspace_feature_travel_title">Travel</string>
+    <string name="smartspace_feature_travel_summary">Flights, trains and other travel info from Gmail</string>
+
+    <string name="smartspace_feature_bedtime_title">Bedtime</string>
+    <string name="smartspace_feature_bedtime_summary">Your upcoming bedtime from the Clock app</string>
+
+    <string name="smartspace_feature_fitness_title">Fitness</string>
+    <string name="smartspace_feature_fitness_summary">Activity info from some of your fitness apps</string>
+
+    <string name="smartspace_feature_safety_check_title">Safety check</string>
+    <string name="smartspace_feature_safety_check_summary">Safety check countdown from the Personal Safety app</string>
+
+    <string name="smartspace_feature_timer_stopwatch_title">Timer and stopwatch</string>
+    <string name="smartspace_feature_timer_stopwatch_summary">Timer and stopwatch info from the Clock app</string>
+
+    <string name="smartspace_feature_connected_devices_title">Connected devices</string>
+    <string name="smartspace_feature_connected_devices_summary">Connection and battery status for Pixel Buds and more</string>
+
+    <string name="smartspace_feature_cross_device_timer_title">Cross-device timer</string>
+    <string name="smartspace_feature_cross_device_timer_summary">Timer info from your home devices</string>
+
+    <string name="smartspace_feature_doorbell_title">Doorbell</string>
+    <string name="smartspace_feature_doorbell_summary">Show who\'s at the door when your Nest or Ring doorbell rings</string>
+
+    <string name="smartspace_feature_torch_title">Torch</string>
+    <string name="smartspace_feature_torch_summary">Shortcut and reminder when torch is on</string>
+
+    <string name="smartspace_feature_loud_sound_title">Loud sound alerts</string>
+    <string name="smartspace_feature_loud_sound_summary">Get notified when you\'re near loud sounds that may cause hearing damage</string>
+
+    <string name="smartspace_feature_passes_nearby_title">Passes nearby</string>
+    <string name="smartspace_feature_passes_nearby_summary">Quickly access passes in Google Wallet based on location</string>
+
+    <!-- About Smartspace Sheet -->
+    <string name="about_smartspace_title">Pixel At a Glance</string>
+    <string name="about_smartspace_description">The current content is being shown using info from your phone and your activity in Google products including:</string>
+    <string name="about_smartspace_location_for_weather">Location for weather</string>
+    <string name="about_smartspace_source_calendar">Google Calendar</string>
+    <string name="about_smartspace_source_maps">Google Maps</string>
+    <string name="about_smartspace_source_gmail">Gmail</string>
+    <string name="about_smartspace_source_search">Google Search</string>
+    <string name="about_smartspace_source_finance">Google Finance</string>
+    <string name="about_smartspace_learn_more">Learn more</string>
+    <string name="about_smartspace_customise_notice_prefix">You can customise the types of updates and info that At a Glance shows.</string>
+    <string name="about_smartspace_close">Close</string>
+
     <!-- Search bar -->
     <string name="search_bar_title">Search bar</string>
     <string name="search_bar_home_screen_summary">Show the Google search bar on the Home screen</string>

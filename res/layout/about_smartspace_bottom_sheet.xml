@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2026 The Android Open Source Project -->
+<com.android.launcher3.qsb.AboutSmartspaceBottomSheet
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/about_smartspace_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/bg_about_smartspace_bottom_sheet"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        android:paddingBottom="28dp">
+
+        <!-- Drag handle -->
+        <View
+            android:layout_width="32dp"
+            android:layout_height="4dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_bottom_sheet_handle" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/about_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="@string/about_smartspace_title"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:fontFamily="sans-serif-medium" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/about_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:gravity="center"
+            android:text="@string/about_smartspace_description"
+            android:textColor="#C4C7C5"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.2" />
+
+        <!-- Sources Section -->
+        <LinearLayout
+            android:id="@+id/about_sources_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:layout_marginTop="24dp">
+
+            <!-- Primary Feature Icon -->
+            <ImageView
+                android:id="@+id/about_feature_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_smartspace_weather"
+                android:tint="@android:color/white"
+                android:importantForAccessibility="no" />
+
+            <!-- Source details item -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/about_source_icon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_location_crosshair"
+                    android:tint="@android:color/white"
+                    android:importantForAccessibility="no" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/about_source_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/about_smartspace_location_for_weather"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:id="@+id/about_source_learn_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/about_smartspace_learn_more"
+                        android:textColor="#C4C7C5"
+                        android:textSize="14sp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Customise Info Notice -->
+        <TextView
+            android:id="@+id/about_customise_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:textColor="#C4C7C5"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.2" />
+
+        <!-- Actions Row (Customise / Close) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:id="@+id/about_customise_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:text="@string/at_a_glance_customise"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/about_close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:minWidth="96dp"
+                android:gravity="center"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="@string/about_smartspace_close"
+                android:textColor="#000000"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:background="@drawable/bg_about_close_button"
+                android:clickable="true"
+                android:focusable="true" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</com.android.launcher3.qsb.AboutSmartspaceBottomSheet>
