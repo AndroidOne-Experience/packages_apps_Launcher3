@@ -20,6 +20,7 @@ import com.android.launcher3.celllayout.CellLayoutLayoutParams;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.R;
 import com.android.launcher3.icons.GraphicsUtils;
+import com.android.launcher3.util.Executors;
 import com.android.launcher3.util.PluginManagerWrapper;
 import com.android.launcher3.views.ActivityContext;
 import com.android.quickstep.SystemUiProxy;
@@ -43,6 +44,8 @@ public class SmartspaceViewContainer extends FrameLayout implements
         super(context, attributeSet);
 
         mView = (BcSmartspaceView) inflate(context, R.layout.smartspace_enhanced, null);
+        mView.setUiSurface(BcSmartspaceDataPlugin.UI_SURFACE_HOME_SCREEN);
+        mView.setBgHandler(Executors.UI_HELPER_EXECUTOR.getHandler());
         mView.setPrimaryTextColor(GraphicsUtils.getAttrColor(context, R.attr.workspaceTextColor));
         mLauncher = (QuickstepLauncher) ActivityContext.lookupContext(context);
         addView(mView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
