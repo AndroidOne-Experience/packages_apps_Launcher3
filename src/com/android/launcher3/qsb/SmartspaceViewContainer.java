@@ -6,6 +6,7 @@ import android.app.smartspace.SmartspaceTargetEvent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -42,8 +43,13 @@ public class SmartspaceViewContainer extends FrameLayout implements
 
     public SmartspaceViewContainer(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        setClipChildren(false);
+        setClipToPadding(false);
 
         mView = (BcSmartspaceView) inflate(context, R.layout.smartspace_enhanced, null);
+        mView.setClipChildren(false);
+        mView.setClipToPadding(false);
+        mView.setHorizontalPaddings(0);
         mView.setUiSurface(BcSmartspaceDataPlugin.UI_SURFACE_HOME_SCREEN);
         mView.setBgHandler(Executors.UI_HELPER_EXECUTOR.getHandler());
         mView.setPrimaryTextColor(GraphicsUtils.getAttrColor(context, R.attr.workspaceTextColor));
@@ -81,14 +87,51 @@ public class SmartspaceViewContainer extends FrameLayout implements
             needsLayoutParamsUpdate = true;
         }
 
-        int marginStart = getResources().getDimensionPixelSize(
-                R.dimen.enhanced_smartspace_margin_start_launcher);
-        int defaultWorkspaceMargin =
-                getResources().getDimensionPixelSize(R.dimen.dynamic_grid_left_right_margin);
-        int extraWorkspaceStartInset =
-                Math.max(0, deviceProfile.getWorkspaceIconProfile().getDesiredWorkspaceHorizontalMarginPx()
-                        - defaultWorkspaceMargin);
-        marginStart = Math.max(0, marginStart - extraWorkspaceStartInset);
+        // Align Smartspace start with the status bar clock padding
+        int statusBarPaddingStart = 0;
+        try {
+            Resources sysUiRes = getContext().getPackageManager()
+                    .getResourcesForApplication("com.android.systemui");
+            int resId = sysUiRes.getIdentifier("status_bar_padding_start", "dimen", "com.android.systemui");
+            if (resId > 0) {
+                statusBarPaddingStart = sysUiRes.getDimensionPixelSize(resId);
+            }
+        } catch (Exception ignored) {}
+
+        if (statusBarPaddingStart == 0) {
+            try {
+                int resId = getResources().getIdentifier("status_bar_padding_start", "dimen", "android");
+                if (resId > 0) {
+                    statusBarPaddingStart = getResources().getDimensionPixelSize(resId);
+                }
+            } catch (Exception ignored) {}
+        }
+
+        int roundedCornerPadding = 0;
+        try {
+            int resId = Resources.getSystem()
+                    .getIdentifier("rounded_corner_content_padding", "dimen", "android");
+            if (resId > 0) {
+                roundedCornerPadding = Resources.getSystem().getDimensionPixelSize(resId);
+            }
+        } catch (Exception ignored) {}
+
+        int insetsLeft = (deviceProfile != null && deviceProfile.getInsets() != null)
+                ? deviceProfile.getInsets().left
+                : 0;
+        int clockStart = Math.max(insetsLeft, roundedCornerPadding) + statusBarPaddingStart;
+
+        int workspaceStart = (deviceProfile != null && deviceProfile.getWorkspaceIconProfile() != null)
+                ? deviceProfile.getWorkspaceIconProfile().getDesiredWorkspaceHorizontalMarginPx()
+                : 0;
+
+        int marginStart;
+        if (clockStart > 0) {
+            marginStart = clockStart - workspaceStart;
+        } else {
+            marginStart = getResources().getDimensionPixelSize(
+                    R.dimen.enhanced_smartspace_margin_start_launcher);
+        }
 
         if (layoutParams.getMarginStart() != marginStart) {
             layoutParams.setMarginStart(marginStart);
