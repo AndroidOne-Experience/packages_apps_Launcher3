@@ -227,7 +227,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         // This is a focus listener that proxies focus from a view into the list view.  This is to
         // work around the search box from getting first focus and showing the cursor.
         setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus && getActiveRecyclerView() != null) {
+            if (hasFocus && getActiveRecyclerView() != null
+                    && (mSearchContainer == null || !mSearchContainer.isFocused())) {
                 getActiveRecyclerView().requestFocus();
             }
         });
@@ -280,14 +281,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         setClipChildren(false);
 
         mSearchContainer = inflateSearchBar();
+        mSearchContainer.setFocusedByDefault(false);
         if (!isSearchBarFloating()) {
             // Add the search box above everything else in this container (if the flag is enabled,
             // it's added to drag layer in onAttach instead).
             addView(mSearchContainer);
-            // The search container is visually at the top of the all apps UI, and should thus be
-            // focused by default. It's added to end of the children list, so it needs to be
-            // explicitly marked as focused by default.
-            mSearchContainer.setFocusedByDefault(true);
         }
         mSearchUiManager = (SearchUiManager) mSearchContainer;
     }

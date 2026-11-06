@@ -138,10 +138,8 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
         switch (state) {
             case SCROLL_STATE_DRAGGING:
                 mCumulativeVerticalScroll = 0;
-                requestFocus();
                 mgr.logger().sendToInteractionJankMonitor(
                         LAUNCHER_ALLAPPS_VERTICAL_SWIPE_BEGIN, this);
-                ActivityContext.lookupContext(getContext()).hideKeyboard();
                 break;
             case SCROLL_STATE_IDLE:
                 mgr.logger().sendToInteractionJankMonitor(

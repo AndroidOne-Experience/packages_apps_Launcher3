@@ -27,11 +27,14 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.text.method.TextKeyListener;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.view.WindowInsets;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.ExtendedEditText;
@@ -63,6 +66,7 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     // The amount of pixels to shift down and overlap with the rest of the content.
     private final int mContentOverlap;
+    private boolean mIsImeVisible = false;
 
     public AppsSearchContainerLayout(Context context) {
         this(context, null);
@@ -84,20 +88,70 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
         mContentOverlap =
                 getResources().getDimensionPixelSize(R.dimen.all_apps_search_bar_content_overlap);
+
+        setCursorVisible(false);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if(mAppsView != null)
+        if (mAppsView != null) {
             mAppsView.getAppsStore().addUpdateListener(this);
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if(mAppsView != null)
+        if (mAppsView != null) {
             mAppsView.getAppsStore().removeUpdateListener(this);
+        }
+        mIsImeVisible = false;
+        setCursorVisible(false);
+    }
+
+    @Override
+    public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+        int imeHeight = insets.getInsets(WindowInsets.Type.ime()).bottom;
+        boolean isImeVisible = insets.isVisible(WindowInsets.Type.ime()) && imeHeight > 0;
+        if (mIsImeVisible && !isImeVisible && imeHeight == 0) {
+            onKeyboardClosed();
+        }
+        if (isImeVisible) {
+            mIsImeVisible = true;
+        }
+        return super.onApplyWindowInsets(insets);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        requestFocus();
+        setCursorVisible(true);
+        boolean result = super.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            showKeyboard();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect);
+        setCursorVisible(focused);
+        if (!focused && !mIsImeVisible) {
+            if (TextUtils.isEmpty(getText())) {
+                resetSearch();
+            }
+        }
+    }
+
+    private void onKeyboardClosed() {
+        mIsImeVisible = false;
+        setCursorVisible(false);
+        clearFocus();
+        if (TextUtils.isEmpty(getText())) {
+            resetSearch();
+        }
     }
 
     @Override
@@ -148,11 +202,17 @@ public class AppsSearchContainerLayout extends ExtendedEditText
 
     @Override
     public void resetSearch() {
+        if (!mIsImeVisible && !isFocused()) {
+            setCursorVisible(false);
+            clearFocus();
+        }
         mSearchBarController.reset();
     }
 
     @Override
     public boolean focusSearchField() {
+        requestFocus();
+        setCursorVisible(true);
         return mSearchBarController.focusSearchField();
     }
 
@@ -166,11 +226,17 @@ public class AppsSearchContainerLayout extends ExtendedEditText
             final boolean isKeyNotWhitespace = unicodeChar > 0 &&
                     !Character.isWhitespace(unicodeChar) && !Character.isSpaceChar(unicodeChar);
             if (isKeyNotWhitespace) {
-                boolean gotKey = TextKeyListener.getInstance().onKeyDown(this, mSearchQueryBuilder,
+                requestFocus();
+                setCursorVisible(true);
+                TextKeyListener.getInstance().onKeyDown(this, getText(),
                         event.getKeyCode(), event);
-                if (gotKey && mSearchQueryBuilder.length() > 0) {
-                    mSearchBarController.focusSearchField();
-                }
+                mSearchBarController.focusSearchField();
+            } else if (event.getKeyCode() == KeyEvent.KEYCODE_DEL) {
+                requestFocus();
+                setCursorVisible(true);
+                TextKeyListener.getInstance().onKeyDown(this, getText(),
+                        event.getKeyCode(), event);
+                mSearchBarController.focusSearchField();
             }
         }
     }
