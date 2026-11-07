@@ -193,7 +193,7 @@ constructor(
         val folderShape: ShapeDelegate,
         val shapeRadius: Float,
     ) {
-        fun toUniqueId() = "$themeCode,$isCircle"
+        fun toUniqueId() = "$themeCode,$isCircle,$iconMask"
 
         val iconShapeInfo = IconShapeInfo.fromPath(iconShape.getPath(), DEFAULT_PATH_SIZE_INT)
         val folderShapeInfo = IconShapeInfo.fromPath(folderShape.getPath(), DEFAULT_PATH_SIZE_INT)

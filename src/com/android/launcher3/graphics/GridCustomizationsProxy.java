@@ -313,12 +313,22 @@ public class GridCustomizationsProxy implements ProxyProvider {
                 }
                 return 1;
             }
-            case SET_SHAPE:
-                if (Flags.newCustomizationPickerUi()) {
+            case SET_SHAPE: {
+                if (Flags.newCustomizationPickerUi()
+                        || com.android.launcher3.Flags.enableLauncherIconShapes()) {
                     mPrefs.put(PREF_ICON_SHAPE,
                             requireNonNullElse(values.getAsString(KEY_SHAPE_KEY), ""));
                 }
+                LauncherModel launcherModel = LauncherAppState.getInstance(mContext).getModel();
+                if (launcherModel.isActive()) {
+                    try {
+                        loadModelSync(launcherModel);
+                    } catch (ExecutionException | InterruptedException e) {
+                        Log.e(TAG, "Fail to load model", e);
+                    }
+                }
                 return UPDATE_SETTING_SUCCESS;
+            }
             case ICON_THEMED:
             case SET_ICON_THEMED: {
                 if (values.getAsBoolean(BOOLEAN_VALUE)) {
