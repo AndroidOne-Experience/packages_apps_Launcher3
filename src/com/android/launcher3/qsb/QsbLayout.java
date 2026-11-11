@@ -17,11 +17,13 @@ import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+import com.android.launcher3.graphics.ThemeManager;
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 
 public class QsbLayout extends FrameLayout implements
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        ThemeManager.ThemeChangeListener {
 
     private static final String TAG = "QsbLayout";
 
@@ -63,7 +65,6 @@ public class QsbLayout extends FrameLayout implements
         mLensIcon = findViewById(R.id.lens_icon);
         setIcons();
 
-        LauncherPrefs.getPrefs(mContext).registerOnSharedPreferenceChangeListener(this);
         setupGoogleClickListener();
         setupGeminiIcon();
         enableLensIcon();
@@ -81,12 +82,18 @@ public class QsbLayout extends FrameLayout implements
         filter.addAction(Intent.ACTION_PACKAGE_FULLY_REMOVED);
         filter.addDataScheme("package");
         mContext.registerReceiver(mPackageChangeReceiver, filter);
+
+        ThemeManager.INSTANCE.get(mContext).addChangeListener(this);
+        LauncherPrefs.getPrefs(mContext).registerOnSharedPreferenceChangeListener(this);
+        setIcons();
         updateQsbMode(true /* force */);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         mContext.unregisterReceiver(mPackageChangeReceiver);
+        ThemeManager.INSTANCE.get(mContext).removeChangeListener(this);
+        LauncherPrefs.getPrefs(mContext).unregisterOnSharedPreferenceChangeListener(this);
         super.onDetachedFromWindow();
     }
 
@@ -104,6 +111,11 @@ public class QsbLayout extends FrameLayout implements
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             }
         }
+    }
+
+    @Override
+    public void onThemeChanged() {
+        setIcons();
     }
 
     @Override
