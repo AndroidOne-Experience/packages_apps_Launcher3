@@ -267,4 +267,12 @@ class LauncherPrefsTest {
         launcherPrefs.removeSync(bootAwareItem)
         assertThat(bootAwarePrefs.contains(bootAwareItem.sharedPrefKey)).isFalse()
     }
+
+    @Test
+    fun getSharedPrefs_encryptedItem_defaultEncryptionTypeIsEncrypted() {
+        assertThat(LauncherPrefs.HOTSEAT_SEARCH_BAR.encryptionType)
+            .isEqualTo(EncryptionType.ENCRYPTED)
+        assertThat(LauncherPrefs.HOTSEAT_QSB_SWAP.encryptionType)
+            .isEqualTo(EncryptionType.ENCRYPTED)
+    }
 }

@@ -57,7 +57,13 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
     open protected fun getSharedPrefs(item: Item): SharedPreferences =
         item.run {
             if (encryptionType == EncryptionType.DEVICE_PROTECTED) deviceProtectedSharedPrefs
-            else encryptedContext.getSharedPreferences(sharedPrefFile, MODE_PRIVATE)
+            else {
+                try {
+                    encryptedContext.getSharedPreferences(sharedPrefFile, MODE_PRIVATE)
+                } catch (e: IllegalStateException) {
+                    deviceProtectedSharedPrefs
+                }
+            }
         }
 
     @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
