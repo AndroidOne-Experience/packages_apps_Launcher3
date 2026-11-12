@@ -31,8 +31,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.provider.Settings;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,7 @@ import com.android.launcher3.graphics.FragmentWithPreview;
  */
 public class QsbContainerView extends FrameLayout {
 
+    private static final String TAG = "QsbContainerView";
     public static final String SEARCH_ENGINE_SETTINGS_KEY = "selected_search_engine";
 
     /**
@@ -71,13 +74,26 @@ public class QsbContainerView extends FrameLayout {
     @WorkerThread
     @Nullable
     public static String getSearchWidgetPackageName(@NonNull Context context) {
-        String providerPkg = Settings.Secure.getString(context.getContentResolver(),
-                SEARCH_ENGINE_SETTINGS_KEY);
+        String providerPkg = null;
+        try {
+            providerPkg = Settings.Secure.getString(context.getContentResolver(),
+                    SEARCH_ENGINE_SETTINGS_KEY);
+        } catch (Exception ignored) {}
+
         if (providerPkg == null) {
-            SearchManager searchManager = context.getSystemService(SearchManager.class);
-            ComponentName componentName = searchManager.getGlobalSearchActivity();
-            if (componentName != null) {
-                providerPkg = searchManager.getGlobalSearchActivity().getPackageName();
+            try {
+                UserManager userManager = context.getSystemService(UserManager.class);
+                if (userManager == null || userManager.isUserUnlocked()) {
+                    SearchManager searchManager = context.getSystemService(SearchManager.class);
+                    if (searchManager != null) {
+                        ComponentName componentName = searchManager.getGlobalSearchActivity();
+                        if (componentName != null) {
+                            providerPkg = componentName.getPackageName();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to get global search activity, falling back to GSA", e);
             }
             if (providerPkg == null) {
                 providerPkg = Utilities.GSA_PACKAGE;

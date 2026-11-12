@@ -204,8 +204,8 @@ public class QsbLayout extends FrameLayout implements
     }
 
     private void setupGoogleClickListener() {
-        String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
         setOnClickListener(view -> {
+            String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
             Intent intent = new Intent("android.search.action.GLOBAL_SEARCH")
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     .setPackage(searchPackage);
